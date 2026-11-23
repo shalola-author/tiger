@@ -125,6 +125,7 @@ impl ProvinceHistory {
         // TODO: check if building is duchy capital building
         vd.field_item("duchy_capital_building", Item::Building);
 
+        vd.field_block("districts");
         vd.field_effect_rooted("effect", Tooltipped::No, Scopes::Province);
     }
 

@@ -1,0 +1,57 @@
+Total error+fatal count: 34824
+
+Top 30 most frequent error messages:
+------------------------------------------------------------
+ 1. [  6044] error(unknown-field): unknown field `trade_good_need`
+ 2. [  4362] error(unknown-field): unknown field `change_prosperity_level`
+ 3. [  2989] error(validation): county with no baronies!
+ 4. [  2076] error(unknown-field): unknown field `district_level_requirement`
+ 5. [  1896] error(unknown-field): unknown field `market_modifier`
+ 6. [  1875] error(unknown-field): unknown field `province_size`
+ 7. [   988] error(unknown-field): unknown token `prosperity_level`
+ 8. [   946] error(field-missing): required field `parameter` missing
+ 9. [   946] error(unknown-field): unknown modifier `not_parameter`
+10. [   782] error(missing-item): `{s}` was not found as a trait or lifestyle
+11. [   547] error(unknown-field): unknown field `market_culture_modifier`
+12. [   459] error(unknown-field): unknown field `triggered_name`
+13. [   437] error(unknown-field): unknown field `market_rite_modifier`
+14. [   288] error(validation): unknown token `trade_good_category_level:`
+15. [   268] error(unknown-field): unknown modifier `name`
+16. [   213] error(unknown-field): unknown token `county_control_baseline`
+17. [   205] error(unknown-field): unknown field `county_potential_trade_good_modifier`
+18. [   200] error(unknown-field): unknown token `target`
+19. [   187] error(validation): `duchy_capital_county_modifier = ` is only for duchy_capital buildings
+20. [   186] error(missing-item): lifestyle trade_good_category not defined in common/lifestyles/
+21. [   185] error(unknown-field): unknown field `province_potential_trade_good_modifier`
+22. [   157] error(unknown-field): unknown field `realm_laws`
+23. [   155] error(image-size): compressed DDS must have width and height divisible by 4
+24. [   151] error(unknown-field): unknown field `special_district_slot`
+25. [   149] error(unknown-field): unknown field `type`
+26. [   103] error(unknown-field): unknown field `control_value`
+27. [    82] error(unknown-field): unknown field `ai_approval`
+28. [    77] error(unknown-field): unknown modifier `trade_good_rice_production_mult`
+29. [    72] error(missing-item): could not find tax slot type trade_good_books_paper_production
+30. [    72] error(modifiers): `trade_good_books_paper_production_add` is a modifier for character but expected province
+
+Top 20 most affected game folders/paths:
+------------------------------------------------------------
+ 1. [  1552] [CK3] common\domiciles\buildings\00_merchant_company_buildings.txt
+ 2. [  1458] [CK3] common\landed_titles\07_starting_merchant_families.txt
+ 3. [  1313] [CK3] common\scripted_modifiers\00_building_modifiers.txt
+ 4. [   923] [CK3] common\scripted_effects\00_building_effects.txt
+ 5. [   869] [CK3] common\domiciles\buildings\00_chinese_estate_buildings.txt
+ 6. [   805] [CK3] common\buildings\regular_district_buildings\00_household_district_buildings.txt
+ 7. [   777] [CK3] common\great_projects\types\00_republic_projects.txt
+ 8. [   733] [CK3] common\buildings\special_buildings\00_special_buildings.txt
+ 9. [   733] [CK3] common\landed_titles\04_china_noble_families.txt
+10. [   687] [CK3] common\scripted_effects\gdp_merchant_luxury_contract_scripted_effects.txt
+11. [   674] [CK3] common\buildings\special_buildings\00_special_mines.txt
+12. [   655] [CK3] common\scripted_effects\gdp_merchant_scripted_effects.txt
+13. [   628] [CK3] events\scheme_events\laamp_base_contract_scheme_events.txt
+14. [   577] [CK3] common\buildings\regular_district_buildings\00_villages_district_buildings.txt
+15. [   567] [CK3] events\activities\ecumenical_council_activity\pam_ecumenical_council_events.txt
+16. [   563] [CK3] common\domiciles\buildings\10_japanese_manor_buildings.txt
+17. [   562] [CK3] common\domiciles\buildings\00_yurt_buildings.txt
+18. [   555] [CK3] common\buildings\regular_district_buildings\00_military_district_buildings.txt
+19. [   549] [CK3] common\nicknames\00_nicknames.txt
+20. [   538] [CK3] events\activities\petition_liege_activity\petition_liege_events.txt

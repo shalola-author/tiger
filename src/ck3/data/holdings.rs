@@ -67,5 +67,6 @@ impl DbKind for HoldingType {
         vd.field_bool("counts_toward_domain_limit_if_disabled");
         vd.field_list_items("required_heir_government_types", Item::GovernmentType);
         vd.field_list("parameters");
+        vd.field_block("districts");
     }
 }
