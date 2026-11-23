@@ -153,6 +153,43 @@ impl DbKind for Building {
             vd.field_value("parameter");
             validate_modifs(block, data, ModifKinds::TradeMarket, vd);
         });
+        vd.field_validated_block("market_faith_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("parameter");
+            vd.field_value("not_parameter");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_terrain_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("parameter");
+            vd.field_value("not_parameter");
+            vd.field_item("terrain", Item::Terrain);
+            vd.field_bool("is_coastal");
+            vd.field_bool("is_riverside");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_size_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_integer("province_size");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_dynasty_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_item("county_holder_dynasty_perk", Item::DynastyPerk);
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_situation_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("parameter");
+            vd.field_value("not_parameter");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_government_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_item("parameter", Item::GovernmentFlag);
+            vd.field_value("not_parameter");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
 
         vd.field_validated_block("triggered_name", |block, data| {
             let mut vd = Validator::new(block, data);
@@ -453,5 +490,79 @@ fn validate_modifiers(vd: &mut Validator, is_duchy_capital: bool) {
         vd.req_field("parameter");
         vd.field_item("parameter", Item::GovernmentFlag);
         validate_modifs(block, data, ModifKinds::Character, vd);
+    });
+
+    vd.multi_field_validated_block("market_modifier", |block, data| {
+        let vd = Validator::new(block, data);
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_culture_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_value("parameter");
+        vd.field_value("not_parameter");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_faith_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_value("parameter");
+        vd.field_value("not_parameter");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_rite_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_value("parameter");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_terrain_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_value("parameter");
+        vd.field_value("not_parameter");
+        vd.field_item("terrain", Item::Terrain);
+        vd.field_bool("is_coastal");
+        vd.field_bool("is_riverside");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_size_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_integer("province_size");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_dynasty_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_item("county_holder_dynasty_perk", Item::DynastyPerk);
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_situation_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_value("parameter");
+        vd.field_value("not_parameter");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+    vd.multi_field_validated_block("market_government_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_item("parameter", Item::GovernmentFlag);
+        vd.field_value("not_parameter");
+        validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+    });
+
+    vd.multi_field_validated_block("character_potential_trade_good_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.req_field("trade_good");
+        vd.field_value("trade_good");
+        validate_modifs(block, data, ModifKinds::Character, vd);
+    });
+
+    vd.multi_field_validated_block("province_potential_trade_good_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.req_field("trade_good");
+        vd.field_value("trade_good");
+        validate_modifs(block, data, ModifKinds::Province, vd);
+    });
+
+    vd.multi_field_validated_block("county_potential_trade_good_modifier", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.req_field("trade_good");
+        vd.field_value("trade_good");
+        validate_modifs(block, data, ModifKinds::County, vd);
     });
 }

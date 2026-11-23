@@ -276,7 +276,12 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     }
 
     // geographical region or terrain
-    for &sfx in &["_development_growth", "_development_growth_factor"] {
+    for &sfx in &[
+        "_development_growth",
+        "_development_growth_factor",
+        "_prosperity_growth",
+        "_prosperity_growth_factor",
+    ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
             if data.item_exists_lc(Item::Region, &s) {
                 if let Some(sev) = warn
@@ -343,6 +348,9 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_construction_gold_cost",
         "_construction_piety_cost",
         "_construction_prestige_cost",
+        "_district_gold_cost",
+        "_district_piety_cost",
+        "_district_prestige_cost",
         "_fertility_decline_add",
         "_fertility_decline_mult",
         "_fertility_growth_add",
@@ -352,6 +360,9 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_tax_mult",
         "_travel_danger",
         "_barter_goods_mult",
+        "_monthly_popular_opinion_change",
+        "_monthly_popular_opinion_change_factor",
+        "_control",
     ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
             return modif_check(
@@ -459,6 +470,9 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     if name_lc.strip_suffix_unchecked("_xp_gain_mult").is_some() {
         return Some(ModifKinds::Character | ModifKinds::TradeRoute);
     }
+    if name_lc.strip_suffix_unchecked("_xp_decline_mult").is_some() {
+        return Some(ModifKinds::Character | ModifKinds::TradeRoute);
+    }
 
     // $TRADE_GOOD_TYPE$_production_flat (province only per modifiers.log)
     if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
@@ -532,7 +546,7 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_toughness_mult",
     ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
-            if data.item_exists_lc(Item::MenAtArms, &s) {
+            if data.item_exists_lc(Item::MenAtArmsBase, &s) {
                 return Some(ModifKinds::Character);
             }
         }

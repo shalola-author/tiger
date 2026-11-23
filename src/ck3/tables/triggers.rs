@@ -2220,7 +2220,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     ),
     (Scopes::Province, "province_size", UncheckedTodo),
     (Scopes::Province, "province_size_baseline", UncheckedTodo),
-    (Scopes::Province, "province_size_level", UncheckedTodo),
+    (Scopes::Province, "province_size_level", CompareValue),
     (Scopes::Character, "provision_cost_to_domicile", CompareValueWarnEq),
     (Scopes::Domicile, "provision_cost_to_owner", CompareValueWarnEq),
     (Scopes::Domicile, "provisions", CompareValueWarnEq),
@@ -2913,6 +2913,12 @@ const TRIGGER_COMPLEX: &[(Scopes, &str, ArgumentValue, Scopes)] = {
         ),
         // (Scopes::LandedTitle, "title_create_faction_type_chance", Item(Item::Faction), Scope(Scopes::Character), Scopes::Value),
         (Scopes::LandedTitle, "title_join_faction_chance", Scope(Scopes::Faction), Scopes::Value),
+        (
+            Scopes::LandedTitle,
+            "trade_good_category_level",
+            Scope(Scopes::TradeGoodCategory),
+            Scopes::Value,
+        ),
         (
             Scopes::LandedTitle.union(Scopes::Province),
             "squared_distance",

@@ -67,6 +67,7 @@ impl DbKind for HolySite {
 
         vd.multi_field_validated_block("character_modifier", |block, data| {
             let mut vd = Validator::new(block, data);
+            vd.field_item("name", Item::Localization);
             if let Some(token) = vd.field_value("name") {
                 data.verify_exists(Item::Localization, token);
             } else {
@@ -78,7 +79,8 @@ impl DbKind for HolySite {
 
         for field in ["faith_character_modifier", "county_holder_character_modifier"] {
             vd.field_validated_block(field, |block, data| {
-                let vd = Validator::new(block, data);
+                let mut vd = Validator::new(block, data);
+                vd.field_item("name", Item::Localization);
                 validate_modifs(block, data, ModifKinds::Character, vd);
             });
         }

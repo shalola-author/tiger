@@ -2187,6 +2187,7 @@
     ("GetTitleCoatOfArms", Ck3(RulerDesignerWindow), Args::Args(&[]), Ck3(DesignerCoA)),
     ("GetTitleRite", Ck3(TitleViewWindow), Args::Args(&[]), Ck3(Rite)),
     ("GetTitleType", Ck3(Title), Args::Args(&[]), Ck3(TitleType)),
+    ("trade_good_category_level", Ck3(Title), Args::Args(&[DType(Ck3(TradeGoodCategory))]), int32),
     ("GetTollLevel", Ck3(TradeMarket), Args::Args(&[]), Ck3(TollLevel)),
     ("GetTollLevelForCharacter", Ck3(TradeMarket), Args::Args(&[DType(Unknown)]), Ck3(TollLevel)),
     ("GetToolset", Ck3(CourtSceneEditorWindow), Args::Args(&[]), Ck3(CourtToolset)),

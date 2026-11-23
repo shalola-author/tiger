@@ -532,6 +532,7 @@
     ("GetTotalDaysInMonth", Args::Args(&[DType(Unknown)]), int32),
     ("GetTradeGoodCategory", Args::Args(&[DType(Unknown)]), Ck3(TradeGoodCategory)),
     ("GetTradeGoodCategoryXpThreshold", Args::Args(&[]), CFixedPoint),
+    ("trade_good_category_level", Args::Args(&[DType(Ck3(TradeGoodCategory))]), int32),
     ("GetTradeGoodType", Args::Args(&[DType(Unknown)]), Ck3(TradeGoodType)),
     ("GetTradeTaskType", Args::Args(&[DType(Unknown)]), void),
     ("GetTrait", Args::Args(&[IType(Item::Trait)]), Ck3(Trait)),

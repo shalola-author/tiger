@@ -77,6 +77,7 @@ impl DbKind for Flavorization {
         vd.field_item("domicile_type", Item::DomicileType);
         vd.field_list_items("name_lists", Item::NameList);
         vd.field_list_items("heritages", Item::CultureHeritage);
+        vd.field_list_items("realm_laws", Item::Law);
         vd.field_list_items("faiths", Item::Faith);
         vd.field_list_items("religions", Item::Religion);
         vd.field_list_items("rites", Item::Rite);

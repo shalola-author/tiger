@@ -265,6 +265,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     (Scopes::None, "add_to_variable_map", UncheckedTodo),
     (Scopes::TradeMarket, "add_toll_exception", UncheckedTodo),
     (Scopes::Character.union(Scopes::TradeMarket).union(Scopes::TradeRoute), "add_trade_good_price_modifier", UncheckedTodo),
+    (Scopes::LandedTitle, "add_trade_good_category_xp", TargetValue("target", Scopes::TradeGoodCategory, "value")),
     (Scopes::TradeMarket, "add_trade_market_modifier", UncheckedTodo),
     (Scopes::Province, "add_trade_post_district", UncheckedTodo),
     (Scopes::TradeRoute, "add_trade_route_modifier", UncheckedTodo),
