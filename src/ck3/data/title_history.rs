@@ -121,6 +121,7 @@ impl TitleHistory {
     pub fn validate_history(&self, date: Date, block: &Block, data: &Everything) {
         let mut vd = Validator::new(block, data);
         vd.field_numeric("change_development_level");
+        vd.field_numeric("change_prosperity_level");
         if let Some(token) = vd.field_value("holder")
             && !token.is("0")
         {
