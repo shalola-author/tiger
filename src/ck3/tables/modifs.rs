@@ -411,6 +411,34 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         }
     }
 
+    // $TRADE_GOOD_TYPE$_production_flat (province only per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_flat") {
+            return Some(ModifKinds::Province);
+        }
+    }
+
+    // $TRADE_GOOD_TYPE$_production_add (province only per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_add") {
+            return Some(ModifKinds::Province);
+        }
+    }
+
+    // $TRADE_GOOD_TYPE$_production_mult (character/province/county per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_mult") {
+            return Some(ModifKinds::Character | ModifKinds::Province | ModifKinds::County);
+        }
+    }
+
+    // $TRADE_GOOD_CATEGORY$_production_mult (character/province/county per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_category_") {
+        if let Some(_tgc) = s.strip_suffix_unchecked("_production_mult") {
+            return Some(ModifKinds::Character | ModifKinds::Province | ModifKinds::County);
+        }
+    }
+
     // $TAX_SLOT_TYPE$_add
     if let Some(s) = name_lc.strip_suffix_unchecked("_add") {
         return modif_check(name, &s, Item::TaxSlotType, ModifKinds::Character, data, warn);
@@ -430,6 +458,34 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     }
     if name_lc.strip_suffix_unchecked("_xp_gain_mult").is_some() {
         return Some(ModifKinds::Character | ModifKinds::TradeRoute);
+    }
+
+    // $TRADE_GOOD_TYPE$_production_flat (province only per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_flat") {
+            return Some(ModifKinds::Province);
+        }
+    }
+
+    // $TRADE_GOOD_TYPE$_production_add (province only per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_add") {
+            return Some(ModifKinds::Province);
+        }
+    }
+
+    // $TRADE_GOOD_TYPE$_production_mult (character/province/county per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_good_") {
+        if let Some(_tg) = s.strip_suffix_unchecked("_production_mult") {
+            return Some(ModifKinds::Character | ModifKinds::Province | ModifKinds::County);
+        }
+    }
+
+    // $TRADE_GOOD_CATEGORY$_production_mult (character/province/county per modifiers.log)
+    if let Some(s) = name_lc.strip_prefix_unchecked("trade_category_") {
+        if let Some(_tgc) = s.strip_suffix_unchecked("_production_mult") {
+            return Some(ModifKinds::Character | ModifKinds::Province | ModifKinds::County);
+        }
     }
 
     // stationed_$MEN_AT_ARMS_TYPE$_*
