@@ -8,7 +8,7 @@ use crate::context::ScopeContext;
 use crate::desc::validate_desc;
 use crate::everything::Everything;
 use crate::fileset::{FileEntry, FileHandler};
-use crate::helpers::{TigerHashMap, dup_error};
+use crate::helpers::{TigerHashMap, TigerHashSet, dup_error};
 use crate::item::Item;
 use crate::parse::ParserMemory;
 use crate::pdxfile::PdxFile;
@@ -23,6 +23,8 @@ use crate::validator::Validator;
 pub struct Titles {
     titles: TigerHashMap<&'static str, Arc<Title>>,
     baronies: TigerHashMap<ProvId, Arc<Title>>,
+    /// Keys of counties that have no baronies defined inside them.
+    baronyless_counties: TigerHashSet<&'static str>,
 }
 
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
@@ -120,8 +122,8 @@ impl Titles {
                 is_county_capital = false;
             }
         }
-        if is_county_capital && !block.get_field_bool("landless").unwrap_or(false) {
-            err(ErrorKey::Validation).msg("county with no baronies!").loc(key).push();
+        if is_county_capital {
+            self.baronyless_counties.insert(key.as_str());
         }
     }
 
@@ -138,6 +140,16 @@ impl Titles {
     }
 
     pub fn validate(&self, data: &Everything) {
+        for key in &self.baronyless_counties {
+            // Counties that are landless by their title type (noble/merchant families)
+            // legitimately have no baronies.
+            let title = self.titles.get(key).unwrap();
+            let landless = title.block.get_field_bool("landless").unwrap_or(false)
+                || data.title_types.is_landless(key);
+            if !landless {
+                err(ErrorKey::Validation).msg("county with no baronies!").loc(&title.key).push();
+            }
+        }
         for item in self.titles.values() {
             item.validate(data);
         }

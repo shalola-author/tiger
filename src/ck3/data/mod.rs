@@ -105,6 +105,7 @@ pub mod task_contracts;
 pub mod tax_slots;
 pub mod terrain;
 pub mod title_history;
+pub mod title_types;
 pub mod titles;
 pub mod trait_portrait_modifiers;
 pub mod traits;

@@ -25,6 +25,7 @@ use crate::ck3::data::{
     prov_terrain::{ProvinceProperties, ProvinceTerrains},
     provinces::Ck3Provinces,
     title_history::TitleHistories,
+    title_types::TitleTypes,
     titles::Titles,
     traits::Traits,
     wars::Wars,
@@ -129,6 +130,8 @@ pub struct Everything {
 
     pub(crate) gameconcepts: GameConcepts,
 
+    pub(crate) title_types: TitleTypes,
+
     pub(crate) titles: Titles,
 
     pub(crate) characters: Characters,
@@ -180,6 +183,7 @@ macro_rules! load_all_ck3 {
         $s.spawn(|_| $t.fileset.handle(&mut $t.province_properties, &$t.parser));
         $s.spawn(|_| $t.fileset.handle(&mut $t.province_terrains, &$t.parser));
         $s.spawn(|_| $t.fileset.handle(&mut $t.gameconcepts, &$t.parser));
+        $s.spawn(|_| $t.fileset.handle(&mut $t.title_types, &$t.parser));
         $s.spawn(|_| $t.fileset.handle(&mut $t.titles, &$t.parser));
         $s.spawn(|_| $t.fileset.handle(&mut $t.characters, &$t.parser));
         $s.spawn(|_| $t.fileset.handle(&mut $t.traits, &$t.parser));
@@ -300,6 +304,7 @@ impl Everything {
             province_properties: ProvinceProperties::default(),
             province_terrains: ProvinceTerrains::default(),
             gameconcepts: GameConcepts::default(),
+            title_types: TitleTypes::default(),
             titles: Titles::default(),
             characters: Characters::default(),
             script_values: ScriptValues::default(),
