@@ -38,6 +38,9 @@ pub fn validate_modifs<'a, MK: ModifKinds>(
     mut vd: Validator<'a>,
 ) {
     vd.unknown_fields(|key, bv| {
+        if key.is("parameter") || key.is("not_parameter") {
+            return;
+        }
         if let Some(mk) = MK::lookup_modif(key, data, Some(Severity::Error)) {
             kinds.require(mk, key);
             validate_non_dynamic_script_value(bv, data);
