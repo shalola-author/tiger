@@ -40,7 +40,8 @@ impl DbKind for ConfederationType {
 
         let mut vd = Validator::new(block, data);
         vd.field_bool("house_based_confederation");
-        let house_based = block.get_field_bool("house_based_confederation").unwrap_or(false);
+        let house_based = block.get_field_bool("house_based_confederation").unwrap_or(false)
+            || block.get_field_value("confederation_base").is_some_and(|v| v.is("house"));
 
         vd.field_script_value_builder("cohesion_base_change_monthly", |key| {
             let mut sc = ScopeContext::new(Scopes::Confederation, key);

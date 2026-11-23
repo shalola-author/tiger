@@ -2569,7 +2569,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::TradeMarket, "trade_category_surplus", UncheckedTodo),
     (Scopes::TradeMarket, "trade_category_unfulfilled_need", UncheckedTodo),
     (Scopes::Character, "trade_competitiveness", CompareValue),
-    (Scopes::LandedTitle, "trade_good_category_level", UncheckedTodo),
+    (Scopes::LandedTitle, "trade_good_category_level", Block(&[("target", Scope(Scopes::TradeGoodCategory)), ("+value", CompareValue)])),
     (Scopes::TradeMarket, "trade_good_exploitative_exports", UncheckedTodo),
     (Scopes::TradeMarket, "trade_good_need", UncheckedTodo),
     (Scopes::TradeMarket, "trade_good_surplus", UncheckedTodo),
