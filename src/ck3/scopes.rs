@@ -1,7 +1,7 @@
 use crate::everything::Everything;
 use crate::scopes::Scopes;
 
-// LAST UPDATED CK3 VERSION 1.16.0
+// LAST UPDATED CK3 VERSION 1.21.0
 pub fn needs_prefix(arg: &str, data: &Everything, scopes: Scopes) -> Option<&'static str> {
     use crate::item::Item;
     if scopes == Scopes::AccoladeType && data.item_exists(Item::AccoladeType, arg) {
@@ -51,6 +51,12 @@ pub fn needs_prefix(arg: &str, data: &Everything, scopes: Scopes) -> Option<&'st
     }
     if scopes == Scopes::DynastyHouse && data.item_exists(Item::House, arg) {
         return Some("house");
+    }
+    if scopes == Scopes::Law && data.item_exists(Item::Law, arg) {
+        return Some("law");
+    }
+    if scopes == Scopes::Building && data.item_exists(Item::Building, arg) {
+        return Some("building");
     }
     if scopes == Scopes::LegendType && data.item_exists(Item::LegendType, arg) {
         return Some("legend_type");

@@ -21,7 +21,7 @@ bitflags! {
     ///
     /// The available scope types depend on the game.
     /// They are listed in `event_scopes.log` from the game data dumps.
-    // LAST UPDATED CK3 VERSION 1.16.0
+    // LAST UPDATED CK3 VERSION 1.21.0
     // LAST UPDATED VIC3 VERSION 1.8.1
     // LAST UPDATED IR VERSION 2.0.4
     //
@@ -121,6 +121,21 @@ bitflags! {
         const Tenet = 1<<80;
         const HolySiteType = 1<<81;
         const RiteType = 1<<82;
+        // CK3 1.21
+        const TitleType = 1<<83;
+        const Building = 1<<84;
+        const District = 1<<85;
+        const BuildingType = 1<<86;
+        const DistrictType = 1<<87;
+        const Law = 1<<88;
+        const TradeGoodCategory = 1<<89;
+        const TradeGoodType = 1<<90;
+        const TradeMarket = 1<<91;
+        const TradeRoute = 1<<92;
+        const TradeMonopoly = 1<<93;
+        const Road = 1<<94;
+        const TollLevel = 1<<95;
+        const MenAtArms = 1<<96;
 
 
 
@@ -151,6 +166,8 @@ impl Scopes {
         match s {
             "ghw" => return Some(Scopes::GreatHolyWar),
             "story" => return Some(Scopes::StoryCycle),
+            "boolean" => return Some(Scopes::Bool),
+            "vassal_contract_obligation_level" => return Some(Scopes::VassalObligationLevel),
             "great_holy_war" | "story_cycle" => return None,
             _ => (),
         }
