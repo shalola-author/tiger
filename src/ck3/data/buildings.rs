@@ -182,6 +182,32 @@ impl DbKind for Building {
             vd.field_item("requires_dlc_flag", Item::DlcFeature);
             validate_modifiers(&mut vd, is_duchy_capital);
         });
+
+        vd.field_validated_block("trade_good_need", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("trade_good");
+            vd.field_value("trade_good_category");
+            // TODO: int
+            vd.field_validated("amount", validate_non_dynamic_script_value);
+            vd.field_bool("skip_internal_fulfillment");
+            vd.field_value("culture_parameter");
+            vd.field_value("not_culture_parameter");
+            vd.field_value("rite_parameter");
+            vd.field_value("not_rite_parameter");
+            vd.field_value("government_flag");
+            vd.field_value("situation_parameter");
+            vd.field_value("dynasty_perk");
+            vd.field_item("terrain", Item::Terrain);
+            vd.field_value("potential_trade_good");
+            vd.field_bool("is_coastal");
+            vd.field_bool("is_riverside");
+            vd.field_value("can_be_filled_multiple_times");
+            vd.field_validated_block("modifiers", |block, data| {
+                let mut vd = Validator::new(block, data);
+                validate_modifiers(&mut vd, is_duchy_capital);
+            });
+            vd.field_validated_block("potential_trade_good", |block, data| {});
+        });
     }
 
     fn set_property(&mut self, _key: &Token, _block: &Block, property: &str) {
