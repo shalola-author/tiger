@@ -135,7 +135,8 @@ impl DbKind for Building {
         vd.field_item("next_building", Item::Building);
         vd.field_validated_rooted("effect_desc", Scopes::None, validate_desc);
 
-        let is_duchy_capital = block.get_field_value("type").is_some_and(|t| t.is("duchy_capital"));
+        let is_duchy_capital = block.get_field_value("type").is_some_and(|t| t.is("duchy_capital"))
+            || block.get_field_values("flag").iter().any(|f| f.is("duchy_building"));
         validate_modifiers(&mut vd, is_duchy_capital);
 
         vd.field_validated_block("market_modifier", |block, data| {
