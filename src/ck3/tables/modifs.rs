@@ -106,6 +106,97 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         }
     }
 
+    // $GOVERNMENT_TYPE$_barter_goods_contribution_add
+    // $GOVERNMENT_TYPE$_barter_goods_contribution_mult
+    // $GOVERNMENT_TYPE$_piety_contribution_add
+    // $GOVERNMENT_TYPE$_piety_contribution_mult
+    for &sfx in &[
+        "_barter_goods_contribution_add",
+        "_barter_goods_contribution_mult",
+        "_piety_contribution_add",
+        "_piety_contribution_mult",
+    ] {
+        if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
+            if let Some(sev) = warn
+                && !data.item_exists_lc(Item::GovernmentType, &s)
+                && !data.item_exists_lc(Item::VassalStance, &s)
+            {
+                let msg = format!("could not find any {s}");
+                let info = "Could be a government type or vassal stance";
+                report(ErrorKey::MissingItem, sev).msg(msg).info(info).loc(name).push();
+            }
+            return Some(ModifKinds::Character);
+        }
+    }
+
+    // $VASSAL_STANCE$_levy_contribution_add
+    // $VASSAL_STANCE$_levy_contribution_mult
+    // $VASSAL_STANCE$_tax_contribution_add
+    // $VASSAL_STANCE$_tax_contribution_mult
+    // $VASSAL_STANCE$_prestige_contribution_add
+    // $VASSAL_STANCE$_prestige_contribution_mult
+    // $VASSAL_STANCE$_herd_contribution_add
+    // $VASSAL_STANCE$_herd_contribution_mult
+    // $VASSAL_STANCE$_barter_goods_contribution_add
+    // $VASSAL_STANCE$_barter_goods_contribution_mult
+    // $VASSAL_STANCE$_piety_contribution_add
+    // $VASSAL_STANCE$_piety_contribution_mult
+    for &sfx in &[
+        "_levy_contribution_add",
+        "_levy_contribution_mult",
+        "_tax_contribution_add",
+        "_tax_contribution_mult",
+        "_prestige_contribution_add",
+        "_prestige_contribution_mult",
+        "_herd_contribution_add",
+        "_herd_contribution_mult",
+        "_barter_goods_contribution_add",
+        "_barter_goods_contribution_mult",
+        "_piety_contribution_add",
+        "_piety_contribution_mult",
+    ] {
+        if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
+            return modif_check(name, &s, Item::VassalStance, ModifKinds::Character, data, warn);
+        }
+    }
+
+    // $VASSAL_STANCE$_opinion
+    // $VASSAL_STANCE$_opinion_same_faith
+    // $VASSAL_STANCE$_different_culture_opinion
+    // $VASSAL_STANCE$_different_faith_opinion
+    // $VASSAL_STANCE$_same_culture_opinion
+    // $VASSAL_STANCE$_same_faith_opinion
+    // $VASSAL_STANCE$_ai_boldness
+    // $VASSAL_STANCE$_ai_compassion
+    // $VASSAL_STANCE$_ai_energy
+    // $VASSAL_STANCE$_ai_greed
+    // $VASSAL_STANCE$_ai_honor
+    // $VASSAL_STANCE$_ai_rationality
+    // $VASSAL_STANCE$_ai_sociability
+    // $VASSAL_STANCE$_ai_vengefulness
+    // $VASSAL_STANCE$_ai_zeal
+    for &sfx in &[
+        "_opinion",
+        "_opinion_same_faith",
+        "_different_culture_opinion",
+        "_different_faith_opinion",
+        "_same_culture_opinion",
+        "_same_faith_opinion",
+        "_ai_boldness",
+        "_ai_compassion",
+        "_ai_energy",
+        "_ai_greed",
+        "_ai_honor",
+        "_ai_rationality",
+        "_ai_sociability",
+        "_ai_vengefulness",
+        "_ai_zeal",
+    ] {
+        if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
+            return modif_check(name, &s, Item::VassalStance, ModifKinds::Character, data, warn);
+        }
+    }
+
     // men-at-arms types
     for &sfx in &[
         "_damage_add",
@@ -162,6 +253,30 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     for &sfx in &["_enemy_scheme_phase_duration_add", "_scheme_phase_duration_add"] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
             return modif_check(name, &s, Item::Scheme, ModifKinds::Character, data, warn);
+        }
+    }
+
+    // $SCHEME_TYPE$_scheme_phase_duration_add
+    // $SCHEME_TYPE$_enemy_scheme_phase_duration_add
+    for &sfx in &["_scheme_phase_duration_add", "_enemy_scheme_phase_duration_add"] {
+        if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
+            return modif_check(name, &s, Item::Scheme, ModifKinds::Character, data, warn);
+        }
+    }
+
+    // $DISTRICT_TYPE$_district_build_gold_cost
+    // $DISTRICT_TYPE$_district_build_piety_cost
+    // $DISTRICT_TYPE$_district_build_prestige_cost
+    // $DISTRICT_TYPE$_district_build_speed
+    // District types don't have a dedicated item type; accept without validation
+    for &sfx in &[
+        "_district_build_gold_cost",
+        "_district_build_piety_cost",
+        "_district_build_prestige_cost",
+        "_district_build_speed",
+    ] {
+        if name_lc.strip_suffix_unchecked(sfx).is_some() {
+            return Some(ModifKinds::Character | ModifKinds::Province | ModifKinds::County);
         }
     }
 
@@ -357,12 +472,15 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_fertility_growth_mult",
         "_levy_size",
         "_supply_limit",
+        "_supply_limit_mult",
         "_tax_mult",
         "_travel_danger",
         "_barter_goods_mult",
         "_monthly_popular_opinion_change",
         "_monthly_popular_opinion_change_factor",
         "_control",
+        "_province_size_baseline_add",
+        "_popular_opinion_add",
     ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
             return modif_check(
@@ -456,7 +574,16 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     }
 
     // $TRADE_GOOD_CATEGORY$_buy_price_mult, etc.
-    for &sfx in &["_buy_price_mult", "_sell_price_mult"] {
+    for &sfx in &[
+        "_buy_price_mult",
+        "_sell_price_mult",
+        "_buy_price_add",
+        "_sell_price_add",
+        "_xp_gain_mult",
+        "_xp_gain_add",
+        "_xp_decline_mult",
+        "_xp_decline_add",
+    ] {
         if name_lc.strip_suffix_unchecked(sfx).is_some() {
             return Some(
                 ModifKinds::Character
@@ -466,12 +593,6 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
                     | ModifKinds::TradeMarket,
             );
         }
-    }
-    if name_lc.strip_suffix_unchecked("_xp_gain_mult").is_some() {
-        return Some(ModifKinds::Character | ModifKinds::TradeRoute);
-    }
-    if name_lc.strip_suffix_unchecked("_xp_decline_mult").is_some() {
-        return Some(ModifKinds::Character | ModifKinds::TradeRoute);
     }
 
     // $TRADE_GOOD_TYPE$_production_flat (province only per modifiers.log)

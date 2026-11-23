@@ -136,6 +136,10 @@ fn validate_bookmark_character(
             && data.item_exists(Item::Rite, token.as_str())
         {
             vd.field_value("religion");
+        } else if let Some(token) = block.get_field_value("religion")
+            && token.is("BOOKMARK_CHARACTER_ANY_FAITH")
+        {
+            vd.field_value("religion");
         } else {
             vd.field_item("religion", Item::Faith);
         }

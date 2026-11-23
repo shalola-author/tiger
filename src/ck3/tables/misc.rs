@@ -242,7 +242,7 @@ pub const CUSTOM_RELIGION_LOCAS: &[&str] = &[
     "WitchGodSheHe",
 ];
 
-/// LAST UPDATED CK3 VERSION 1.19.0
+/// LAST UPDATED CK3 VERSION 1.21.0
 /// Taken from `has_dlc_feature` in triggers.log
 pub const DLC_FEATURES_CK3: &[&str] = &[
     "garments_of_the_hre",
@@ -290,6 +290,7 @@ pub const DLC_FEATURES_CK3: &[&str] = &[
     "celestial_court_attire",
     "symbols_of_authority",
     "songs_of_the_realm",
+    "silk_and_silver",
 ];
 
 /// A list of music provided by DLCs, for people who don't have them
