@@ -90,6 +90,7 @@ impl DbKind for Building {
         // TODO: int
         vd.field_validated("construction_time", validate_non_dynamic_script_value);
         vd.field_choice("type", &["regular", "special", "duchy_capital", "great_building"]);
+        vd.field_value("district_level_requirement");
 
         vd.multi_field_validated_block("assets", |block, data| {
             let mut vd = Validator::new(block, data);
