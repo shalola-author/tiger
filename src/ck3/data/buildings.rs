@@ -153,6 +153,12 @@ impl DbKind for Building {
             validate_modifs(block, data, ModifKinds::TradeMarket, vd);
         });
 
+        vd.field_validated_block("triggered_name", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_trigger_builder("trigger", Tooltipped::No, sc_builder);
+            vd.field_value("reference");
+        });
+
         // TODO: fallback requires an `is_enabled` trigger to be configured as well
         vd.field_validated_block("fallback", |block, data| {
             let mut vd = Validator::new(block, data);
