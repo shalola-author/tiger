@@ -1,6 +1,7 @@
 .idea/
 .vscode/
 /target/
+.scratch/
 cachegrind.out*
 callgrind.out*
 massif.out*
