@@ -189,6 +189,7 @@ impl DbKind for Building {
             vd.field_value("trade_good_category");
             // TODO: int
             vd.field_validated("amount", validate_non_dynamic_script_value);
+            vd.field_value("province_size");
             vd.field_bool("skip_internal_fulfillment");
             vd.field_value("culture_parameter");
             vd.field_value("not_culture_parameter");
