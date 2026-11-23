@@ -137,6 +137,22 @@ impl DbKind for Building {
 
         let is_duchy_capital = block.get_field_value("type").is_some_and(|t| t.is("duchy_capital"));
         validate_modifiers(&mut vd, is_duchy_capital);
+
+        vd.field_validated_block("market_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_culture_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("parameter");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+        vd.field_validated_block("market_rite_modifier", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_value("parameter");
+            validate_modifs(block, data, ModifKinds::TradeMarket, vd);
+        });
+
         // TODO: fallback requires an `is_enabled` trigger to be configured as well
         vd.field_validated_block("fallback", |block, data| {
             let mut vd = Validator::new(block, data);
