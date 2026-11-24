@@ -569,7 +569,9 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     }
 
     // $TAX_SLOT_TYPE$_add
-    if let Some(s) = name_lc.strip_suffix_unchecked("_add") {
+    if !name_lc.as_str().starts_with("stationed_")
+        && let Some(s) = name_lc.strip_suffix_unchecked("_add")
+    {
         return modif_check(name, &s, Item::TaxSlotType, ModifKinds::Character, data, warn);
     }
 
@@ -643,7 +645,7 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
             "_toughness_mult",
         ] {
             if let Some(s) = s.strip_suffix_unchecked(sfx) {
-                return modif_check(name, &s, Item::MenAtArms, ModifKinds::Province | ModifKinds::County, data, warn);
+                return modif_check(name, &s, Item::MenAtArmsBase, ModifKinds::Province | ModifKinds::County, data, warn);
             }
         }
     }
