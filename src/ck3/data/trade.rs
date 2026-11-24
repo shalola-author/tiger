@@ -45,6 +45,11 @@ impl DbKind for TradeGoodCategory {
     fn validate(&self, _key: &Token, block: &Block, data: &Everything) {
         let mut vd = Validator::new(block, data);
 
+        vd.field_bool("need");
+        vd.field_block("color");
         vd.field_list_items("trade_goods", Item::TradeGoodType);
+        vd.field_block("per_level_interval");
+        vd.field_block("milestone_interval");
+        vd.field_block("levels");
     }
 }
