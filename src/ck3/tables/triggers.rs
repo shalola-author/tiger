@@ -1277,7 +1277,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::LandedTitle, "has_title_law", Item(Item::Law)),
     (Scopes::LandedTitle, "has_title_law_flag", Item(Item::LawFlag)),
     (Scopes::TradeMarket, "has_toll_exception", UncheckedTodo),
-    (Scopes::TradeGoodCategory, "has_trade_good_category_xp_track", UncheckedTodo),
+    (Scopes::TradeGoodCategory, "has_trade_good_category_xp_track", Boolean),
     (Scopes::TradeGoodType, "has_trade_good_type", UncheckedTodo),
     (Scopes::TradeMarket, "has_trade_market_modifier", UncheckedTodo),
     (Scopes::TradeMarket, "has_trade_market_modifier_duration_remaining", UncheckedTodo),
