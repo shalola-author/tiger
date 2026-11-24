@@ -182,6 +182,7 @@ impl DbKind for Doctrine {
 
         vd.field_validated_block("special_parameters", validate_special_parameters);
         vd.field_validated_block("traits", validate_traits);
+        vd.field_validated_block_sc("historical_glossary", &mut sc, |block, data, _| validate_historical_glossary(block, data, key));
     }
 }
 
@@ -225,6 +226,20 @@ fn validate_parameters(block: &Block, data: &Everything) {
             return;
         }
         value.expect_number();
+    });
+}
+
+fn validate_historical_glossary(block: &Block, data: &Everything, key: &Token) {
+    let mut vd = Validator::new(block, data);
+    vd.field_validated_block("first_valid", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.multi_field_validated_block("triggered_desc", |block, data| {
+            let mut vd = Validator::new(block, data);
+            let mut sc = ScopeContext::new(Scopes::Faith, key);
+            vd.field_trigger("trigger", Tooltipped::No, &mut sc);
+            vd.field_item("desc", Item::Localization);
+        });
+        vd.field_item("desc", Item::Localization);
     });
 }
 
@@ -299,6 +314,7 @@ impl DbKind for Tenet {
         });
         vd.field_validated_block("special_parameters", validate_special_parameters);
         vd.field_validated_block("traits", validate_traits);
+        vd.field_validated_block_sc("historical_glossary", &mut sc, |block, data, _| validate_historical_glossary(block, data, key));
     }
 }
 

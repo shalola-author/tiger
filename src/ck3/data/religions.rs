@@ -390,6 +390,7 @@ impl DbKind for Rite {
         vd.field_list_items("cultures", Item::Culture);
         vd.field_bool("convert");
         vd.field_bool("create");
+        vd.field_bool("history");
         vd.field_list_items("tenets", Item::Tenet);
         vd.field_list_items("doctrines", Item::Doctrine);
         vd.multi_field_validated_block("tenet_selection_pair", |block, data| {
