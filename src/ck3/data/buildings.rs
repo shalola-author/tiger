@@ -480,15 +480,15 @@ fn validate_modifiers(vd: &mut Validator, is_duchy_capital: bool) {
 
     vd.multi_field_validated_block("province_government_modifier", |block, data| {
         let mut vd = Validator::new(block, data);
-        vd.req_field("parameter");
         vd.field_item("parameter", Item::GovernmentFlag);
+        vd.field_item("not_parameter", Item::GovernmentFlag);
         validate_modifs(block, data, ModifKinds::Province, vd);
     });
 
     vd.multi_field_validated_block("character_government_modifier", |block, data| {
         let mut vd = Validator::new(block, data);
-        vd.req_field("parameter");
         vd.field_item("parameter", Item::GovernmentFlag);
+        vd.field_item("not_parameter", Item::GovernmentFlag);
         validate_modifs(block, data, ModifKinds::Character, vd);
     });
 
@@ -563,6 +563,7 @@ fn validate_modifiers(vd: &mut Validator, is_duchy_capital: bool) {
         let mut vd = Validator::new(block, data);
         vd.req_field("trade_good");
         vd.field_value("trade_good");
-        validate_modifs(block, data, ModifKinds::County, vd);
+        // vanilla uses province-kind `trade_good_*_production_add` inside this county block
+        validate_modifs(block, data, ModifKinds::County | ModifKinds::Province, vd);
     });
 }

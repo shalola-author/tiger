@@ -211,15 +211,9 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_toughness_mult",
     ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
-            if let Some(s) = s.strip_prefix_unchecked("stationed_") {
-                return modif_check(
-                    name,
-                    &s,
-                    Item::MenAtArmsBase,
-                    ModifKinds::Province,
-                    data,
-                    warn,
-                );
+            if name_lc.as_str().starts_with("stationed_") {
+                // handled by the stationed_ handler below, which also allows county use
+                continue;
             }
             return modif_check(name, &s, Item::MenAtArmsBase, ModifKinds::Character, data, warn);
         }
@@ -319,6 +313,10 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
     // $LIFESTYLE$_xp_gain_mult needs to be handled here too.
     for &sfx in &["_xp_degradation_mult", "_xp_gain_mult", "_xp_loss_mult"] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
+            if name_lc.as_str().starts_with("trade_category_") {
+                // handled by the $TRADE_GOOD_CATEGORY$_* handler below
+                continue;
+            }
             if let Some(s) = s.strip_prefix_unchecked("trait_track_") {
                 return modif_check(name, &s, Item::TraitTrack, ModifKinds::Character, data, warn);
             }
@@ -327,7 +325,7 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
                 if !data.item_exists_lc(Item::Lifestyle, &s)
                     && !data.item_exists_lc(Item::Trait, &s)
                 {
-                    let msg = "`{s}` was not found as a trait or lifestyle";
+                    let msg = format!("`{s}` was not found as a trait or lifestyle");
                     let info = format!("so the modifier {name} does not exist");
                     report(ErrorKey::MissingItem, sev).msg(msg).info(info).loc(name).push();
                 } else if data.item_exists_lc(Item::Trait, &s) && !data.traits.has_track_lc(&s) {
@@ -340,8 +338,10 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         }
     }
 
-    // $LIFESTYLE_xp_gain_add
-    if let Some(s) = name_lc.strip_suffix_unchecked("_xp_gain_add") {
+    // $LIFESTYLE$_xp_gain_add
+    if !name_lc.as_str().starts_with("trade_category_")
+        && let Some(s) = name_lc.strip_suffix_unchecked("_xp_gain_add")
+    {
         return modif_check(name, &s, Item::Lifestyle, ModifKinds::Character, data, warn);
     }
 
@@ -568,24 +568,8 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         }
     }
 
-    // $TAX_SLOT_TYPE$_add
-    if !name_lc.as_str().starts_with("stationed_")
-        && let Some(s) = name_lc.strip_suffix_unchecked("_add")
-    {
-        return modif_check(name, &s, Item::TaxSlotType, ModifKinds::Character, data, warn);
-    }
-
-    // $TRADE_GOOD_CATEGORY$_buy_price_mult, etc.
-    for &sfx in &[
-        "_buy_price_mult",
-        "_sell_price_mult",
-        "_buy_price_add",
-        "_sell_price_add",
-        "_xp_gain_mult",
-        "_xp_gain_add",
-        "_xp_decline_mult",
-        "_xp_decline_add",
-    ] {
+    // $TRADE_GOOD_CATEGORY$_buy_price_mult, etc. (same use areas as the trade good equivalents)
+    for &sfx in &["_buy_price_mult", "_sell_price_mult", "_buy_price_add", "_sell_price_add"] {
         if name_lc.strip_suffix_unchecked(sfx).is_some() {
             return Some(
                 ModifKinds::Character
@@ -595,6 +579,29 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
                     | ModifKinds::TradeMarket,
             );
         }
+    }
+
+    // $TRADE_GOOD_CATEGORY$_xp_gain_mult / _xp_gain_add (character and trade_route per modifiers.log)
+    if name_lc.as_str().starts_with("trade_category_") {
+        for &sfx in &["_xp_gain_mult", "_xp_gain_add"] {
+            if name_lc.strip_suffix_unchecked(sfx).is_some() {
+                return Some(ModifKinds::Character | ModifKinds::TradeRoute);
+            }
+        }
+        // $TRADE_GOOD_CATEGORY$_xp_decline_mult / _xp_decline_add (character only per modifiers.log)
+        for &sfx in &["_xp_decline_mult", "_xp_decline_add"] {
+            if name_lc.strip_suffix_unchecked(sfx).is_some() {
+                return Some(ModifKinds::Character);
+            }
+        }
+    }
+
+    // $TAX_SLOT_TYPE$_add (must come after the trade category handlers, whose *_add
+    // suffixes would otherwise be misreported as missing tax slot types)
+    if !name_lc.as_str().starts_with("stationed_")
+        && let Some(s) = name_lc.strip_suffix_unchecked("_add")
+    {
+        return modif_check(name, &s, Item::TaxSlotType, ModifKinds::Character, data, warn);
     }
 
     // $TRADE_GOOD_TYPE$_production_flat (province only per modifiers.log)
@@ -645,7 +652,18 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
             "_toughness_mult",
         ] {
             if let Some(s) = s.strip_suffix_unchecked(sfx) {
-                return modif_check(name, &s, Item::MenAtArmsBase, ModifKinds::Province | ModifKinds::County, data, warn);
+                if s.as_str() == "maa" {
+                    // `maa` is the wildcard for all men-at-arms types
+                    return Some(ModifKinds::Province | ModifKinds::County);
+                }
+                return modif_check(
+                    name,
+                    &s,
+                    Item::MenAtArmsBase,
+                    ModifKinds::Province | ModifKinds::County,
+                    data,
+                    warn,
+                );
             }
         }
     }
