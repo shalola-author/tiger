@@ -22,7 +22,7 @@ use crate::token::Token;
 use crate::tooltipped::Tooltipped;
 use crate::trigger::validate_trigger;
 use crate::trigger::{
-    Part, PartFlags, is_character_token, partition, validate_argument, validate_argument_scope,
+    Part, PartFlags, partition, validate_argument, validate_argument_scope,
     validate_inscopes, validate_trigger_internal, warn_not_first,
 };
 use crate::trigger::{validate_target, validate_target_ok_this};
@@ -659,7 +659,13 @@ if name == "succession_appointment_investors" {
           vd.ban_field("trade_market", || format!("`{listtype}_{name}`"));
           vd.ban_field("trade_good_type", || format!("`{listtype}_{name}`"));
       }
-  }
+
+    if name == "top_trade_good_in_range" || name == "desired_tenet" || name == "undesired_tenet" {
+        vd.field_script_value("selection_count", sc);
+    } else {
+        vd.ban_field("selection_count", || format!("`{listtype}_{name}`"));
+    }
+}
 
 pub fn validate_modifiers_with_base(block: &Block, data: &Everything, sc: &mut ScopeContext) {
     let mut vd = Validator::new(block, data);
@@ -832,7 +838,6 @@ pub fn validate_scope_chain(
                     sc.replace_prev();
                 } else if part_lc == "this" {
                     sc.replace_this();
-                } else if is_character_token(part.as_str(), data) {
                 } else if let Some((inscopes, outscope)) = scope_to_scope(part) {
                     validate_inscopes(part_flags, part, inscopes, sc, data);
                     sc.replace(outscope, part.clone());

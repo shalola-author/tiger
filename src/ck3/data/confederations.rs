@@ -40,12 +40,14 @@ impl DbKind for ConfederationType {
 
         let mut vd = Validator::new(block, data);
         vd.field_bool("house_based_confederation");
+        vd.field_choice("confederation_base", &["character", "house", "title"]);
+        vd.field_integer("diplomatic_icon_frame_index");
         let house_based = block.get_field_bool("house_based_confederation").unwrap_or(false)
             || block.get_field_value("confederation_base").is_some_and(|v| v.is("house"));
+        let title_based = block.get_field_value("confederation_base").is_some_and(|v| v.is("title"));
 
         vd.field_script_value_builder("cohesion_base_change_monthly", |key| {
             let mut sc = ScopeContext::new(Scopes::Confederation, key);
-            // TODO: figure out scope type
             sc.define_name("bloc", Scopes::all(), key);
             sc
         });
@@ -54,6 +56,13 @@ impl DbKind for ConfederationType {
             sc.define_name("house", Scopes::DynastyHouse, key);
             sc
         });
+        if title_based {
+            vd.field_script_value_builder("cohesion_base_change_per_title_monthly", |key| {
+                let mut sc = ScopeContext::new(Scopes::Confederation, key);
+                sc.define_name("bloc", Scopes::all(), key);
+                sc
+            });
+        }
         vd.field_script_value_builder("cohesion_contribution", |key| {
             let mut sc = ScopeContext::new(Scopes::Confederation, key);
             sc.define_name("base_value", Scopes::Value, key);
@@ -80,7 +89,13 @@ impl DbKind for ConfederationType {
                     vvd.bool();
                 });
             });
-            validate_confederation_modifiers(&mut vd, house_based);
+            if house_based {
+                validate_confederation_modifiers(&mut vd, true);
+            } else if title_based {
+                validate_title_confederation_modifiers(&mut vd);
+            } else {
+                validate_confederation_modifiers(&mut vd, false);
+            }
         });
 
         if levels > 0 {
@@ -93,7 +108,26 @@ impl DbKind for ConfederationType {
         vd.field_trigger_rooted("is_valid_confederation", Tooltipped::No, Scopes::Confederation);
         vd.field_effect_rooted("on_confederation_destroyed", Tooltipped::No, Scopes::Confederation);
 
-        validate_confederation_modifiers(&mut vd, house_based);
+        if house_based {
+            validate_confederation_modifiers(&mut vd, true);
+        } else if title_based {
+            validate_title_confederation_modifiers(&mut vd);
+        } else {
+            validate_confederation_modifiers(&mut vd, false);
+        }
+
+        if title_based {
+            vd.field_trigger_rooted("is_valid_member_title", Tooltipped::No, Scopes::Confederation);
+            vd.field_effect_rooted("on_member_title_joined", Tooltipped::No, Scopes::Confederation);
+            vd.field_effect_rooted("on_member_title_left", Tooltipped::No, Scopes::Confederation);
+        }
+
+        vd.field_trigger_builder("member_would_join_war", Tooltipped::No, |key| {
+            let mut sc = ScopeContext::new(Scopes::Confederation, key);
+            sc.define_name("enemy", Scopes::Character, key);
+            sc.define_name("ally", Scopes::Character, key);
+            sc
+        });
 
         let sc_member_builder = |key: &Token| {
             let mut sc = ScopeContext::new(Scopes::Confederation, key);
@@ -137,5 +171,21 @@ fn validate_confederation_modifiers(vd: &mut Validator, house_based: bool) {
         } else {
             vd.ban_field(field, || "house based confederations");
         }
+    }
+}
+
+fn validate_title_confederation_modifiers(vd: &mut Validator) {
+    for field in &[
+        "leading_title_holder",
+        "leading_title_noble_family",
+        "leading_title_landed_vassal",
+        "member_title_holder",
+        "member_title_noble_family",
+        "member_title_landed_vassal",
+    ] {
+        vd.field_validated_block(field, |block, data| {
+            let vd = Validator::new(block, data);
+            validate_modifs(block, data, ModifKinds::Character, vd);
+        });
     }
 }

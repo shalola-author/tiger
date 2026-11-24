@@ -17,7 +17,7 @@ use crate::item::Item;
 use crate::lowercase::Lowercase;
 use crate::report::{ErrorKey, Severity, err, warn};
 use crate::scopes::Scopes;
-use crate::script_value::{validate_non_dynamic_script_value, validate_script_value};
+use crate::script_value::{validate_non_dynamic_script_value, validate_script_value, validate_numeric_script_value};
 use crate::special_tokens::SpecialTokens;
 use crate::token::Token;
 use crate::tooltipped::Tooltipped;
@@ -716,6 +716,7 @@ pub fn validate_create_confederation(
     vd.field_validated_sc("name", sc, validate_desc);
     vd.field_target("type", sc, Scopes::ConfederationType);
     vd.field_target("leader", sc, Scopes::DynastyHouse);
+    vd.field_target("leading_title", sc, Scopes::LandedTitle);
     sc.define_name("new_confederation", Scopes::Confederation, key);
 }
 
@@ -2904,4 +2905,70 @@ pub fn validate_add_trade_good_price_modifier(
     }
     vd.field_script_value("value", sc);
     vd.field_script_value("years", sc);
+}
+
+pub fn validate_remove_short_term_gold(
+    _key: &Token,
+    bv: &BV,
+    data: &Everything,
+    sc: &mut ScopeContext,
+    _tooltipped: Tooltipped,
+) {
+    match bv {
+        BV::Block(block) => {
+            let mut vd = Validator::new(block, data);
+            // Check if it has a "gold" field (new syntax) or loose values (old syntax: { min max })
+            if block.get_field("gold").is_some() {
+                vd.field_validated_block_sc("gold", sc, |b, _data, sc_inner| {
+                    let mut vd = Validator::new(b, data);
+                    vd.field_script_value("value", sc_inner);
+                    vd.field_script_value("divide", sc_inner);
+                    vd.field_script_value("multiply", sc_inner);
+                    vd.field_script_value("min", sc_inner);
+                    vd.field_script_value("max", sc_inner);
+                });
+            } else {
+                // Old syntax: { min max } - accept two numeric values
+                vd.unknown_value_fields(|_, value| {
+                    value.expect_number();
+                });
+                vd.unknown_block_fields(|_, _| {});
+            }
+        }
+        BV::Value(_) => {
+            validate_numeric_script_value(bv, data, sc);
+        }
+    }
+}
+
+pub fn validate_add_short_term_gold(
+    _key: &Token,
+    bv: &BV,
+    data: &Everything,
+    sc: &mut ScopeContext,
+    _tooltipped: Tooltipped,
+) {
+    match bv {
+        BV::Block(block) => {
+            let mut vd = Validator::new(block, data);
+            if block.get_field("gold").is_some() {
+                vd.field_validated_block_sc("gold", sc, |b, _data, sc_inner| {
+                    let mut vd = Validator::new(b, data);
+                    vd.field_script_value("value", sc_inner);
+                    vd.field_script_value("divide", sc_inner);
+                    vd.field_script_value("multiply", sc_inner);
+                    vd.field_script_value("min", sc_inner);
+                    vd.field_script_value("max", sc_inner);
+                });
+            } else {
+                vd.unknown_value_fields(|_, value| {
+                    value.expect_number();
+                });
+                vd.unknown_block_fields(|_, _| {});
+            }
+        }
+        BV::Value(_) => {
+            validate_numeric_script_value(bv, data, sc);
+        }
+    }
 }

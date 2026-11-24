@@ -68,6 +68,15 @@ impl DbKind for Decision {
         vd.field_validated_block("advice", validate_advice);
         vd.field_integer("sort_order");
         vd.field_bool("is_invisible");
+        vd.field_bool("requires_approve");
+        vd.field_validated_block("ai_approval", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_script_value_rooted("value", Scopes::Character);
+            vd.unknown_block_fields(|key, b| {
+                let mut sc = ScopeContext::new(Scopes::Character, key);
+                crate::trigger::validate_trigger(b, data, &mut sc, crate::tooltipped::Tooltipped::No);
+            });
+        });
         vd.field_bool("ai_goal");
         vd.field_integer("ai_check_interval");
         vd.field_validated_key_block("ai_check_interval_by_tier", |key, b, data| {

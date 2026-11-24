@@ -460,6 +460,16 @@ impl Character {
                     validate_effect(block, data, sc, Tooltipped::No);
                     return None;
                 }
+                "portrait_override" => {
+                    let mut vd = Validator::new(block, data);
+                    vd.field_validated_block(
+                        "portrait_modifier_overrides",
+                        validate_portrait_modifier_overrides,
+                    );
+                    vd.field_validated_block("hair", validate_color);
+                    vd.field_validated_block("colors", validate_portrait_colors);
+                    return None;
+                }
                 _ => (),
             },
         }

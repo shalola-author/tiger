@@ -210,6 +210,29 @@ impl DbKind for Law {
             vd.field_bool("resign_outside_realm");
         });
 
+        vd.field_validated_block("ai_approval", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_script_value_rooted("value", Scopes::Character);
+            vd.unknown_block_fields(|key, b| {
+                let mut sc = ScopeContext::new(Scopes::Character, key);
+                crate::trigger::validate_trigger(b, data, &mut sc, crate::tooltipped::Tooltipped::No);
+            });
+        });
+        vd.field_validated_block("manual_law_change", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.unknown_value_fields(|_, value| {
+                if !value.is("yes") && !value.is("no") {
+                    let mut sc = ScopeContext::new(Scopes::Character, value);
+                    crate::trigger::validate_trigger(block, data, &mut sc, crate::tooltipped::Tooltipped::No);
+                }
+            });
+            vd.unknown_block_fields(|key, b| {
+                let mut sc = ScopeContext::new(Scopes::Character, key);
+                crate::trigger::validate_trigger(b, data, &mut sc, crate::tooltipped::Tooltipped::No);
+            });
+        });
+        vd.field_trigger_rooted("voting_session", Tooltipped::No, Scopes::Character);
+
         vd.field_script_value_no_breakdown("ai_will_do", &mut sc);
 
         // undocumented
