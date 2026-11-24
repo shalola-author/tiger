@@ -380,6 +380,20 @@ pub fn validate_assign_councillor_type(
     vd.field_bool("remove_existing_councillor");
 }
 
+pub fn validate_assign_trader(
+    _key: &Token,
+    _block: &Block,
+    _data: &Everything,
+    sc: &mut ScopeContext,
+    mut vd: Validator,
+    _tooltipped: Tooltipped,
+) {
+    vd.req_field("character");
+    vd.req_field("task");
+    vd.field_target("character", sc, Scopes::Character);
+    vd.field_choice("task", &["manage_competition", "negotiate_deals", "oversee_caravans"]);
+}
+
 pub fn validate_battle_event(
     _key: &Token,
     _block: &Block,
@@ -2843,4 +2857,51 @@ pub fn validate_change_tenet_popularity(
         validate_target(token, data, sc, Scopes::Tenet);
     }
     vd.field_script_value("change", sc);
+}
+
+pub fn validate_add_price_modifier_for_character(
+    key: &Token,
+    block: &Block,
+    data: &Everything,
+    sc: &mut ScopeContext,
+    mut vd: Validator,
+    _tooltipped: Tooltipped,
+) {
+    vd.req_field("character");
+    vd.req_field("type");
+    vd.req_field("trade_good_type");
+    vd.req_field("value");
+    vd.req_field("years");
+    vd.field_target("character", sc, Scopes::Character);
+    vd.field_choice("type", &["buy_add", "buy_mult", "sell_add", "sell_mult"]);
+    if let Some(token) = vd.field_value("trade_good_type")
+        && !data.item_exists(Item::TradeGoodType, token.as_str())
+    {
+        validate_target(token, data, sc, Scopes::TradeGoodType);
+    }
+    vd.field_script_value("value", sc);
+    vd.field_script_value("years", sc);
+    vd.field_validated_sc("desc", sc, validate_desc);
+}
+
+pub fn validate_add_trade_good_price_modifier(
+    key: &Token,
+    block: &Block,
+    data: &Everything,
+    sc: &mut ScopeContext,
+    mut vd: Validator,
+    _tooltipped: Tooltipped,
+) {
+    vd.req_field("type");
+    vd.req_field("trade_good_type");
+    vd.req_field("value");
+    vd.req_field("years");
+    vd.field_choice("type", &["buy_add", "buy_mult", "sell_add", "sell_mult"]);
+    if let Some(token) = vd.field_value("trade_good_type")
+        && !data.item_exists(Item::TradeGoodType, token.as_str())
+    {
+        validate_target(token, data, sc, Scopes::TradeGoodType);
+    }
+    vd.field_script_value("value", sc);
+    vd.field_script_value("years", sc);
 }

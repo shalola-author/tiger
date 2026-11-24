@@ -635,14 +635,31 @@ pub fn validate_inside_iterator(
         // Don't ban, because it's a valid trigger
     }
 
-    if name == "succession_appointment_investors" {
-        vd.req_field("candidate");
-        vd.field_value("candidate"); // prechecked
-        vd.field_any_cmp("value"); // prechecked
-    } else {
-        vd.ban_field("candidate", || format!("`{listtype}_succession_appointment_investors`"));
-    }
-}
+if name == "succession_appointment_investors" {
+          vd.req_field("candidate");
+          vd.field_value("candidate"); // prechecked
+          vd.field_any_cmp("value"); // prechecked
+      } else {
+          vd.ban_field("candidate", || format!("`{listtype}_succession_appointment_investors`"));
+      }
+
+      if name == "potential_trade_ally_in_market" || name == "potential_trade_rival_in_market" {
+          vd.req_field("target");
+          vd.field_target("target", sc, Scopes::Character);
+          vd.field_item_or_target("trade_good_type", sc, Item::TradeGoodType, Scopes::TradeGoodType);
+      } else {
+          vd.ban_field("target", || format!("`{listtype}_{name}`"));
+          vd.ban_field("trade_good_type", || format!("`{listtype}_{name}`"));
+      }
+
+      if name == "potential_trade_ally_on_routes" || name == "potential_trade_rival_on_routes" {
+          vd.field_target("trade_market", sc, Scopes::TradeMarket);
+          vd.field_item_or_target("trade_good_type", sc, Item::TradeGoodType, Scopes::TradeGoodType);
+      } else {
+          vd.ban_field("trade_market", || format!("`{listtype}_{name}`"));
+          vd.ban_field("trade_good_type", || format!("`{listtype}_{name}`"));
+      }
+  }
 
 pub fn validate_modifiers_with_base(block: &Block, data: &Everything, sc: &mut ScopeContext) {
     let mut vd = Validator::new(block, data);

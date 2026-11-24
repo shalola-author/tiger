@@ -9,8 +9,10 @@ use crate::helpers::TigerHashMap;
 use crate::item::Item;
 use crate::scopes::Scopes;
 use crate::token::Token;
+use crate::trigger::Trigger;
 
 use Effect::*;
+use Trigger::{Block, CompareValue, UncheckedValue};
 
 pub fn scope_effect(name: &Token, data: &Everything) -> Option<(Scopes, Effect)> {
     let name_lc = name.as_str().to_ascii_lowercase();
@@ -190,7 +192,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     (Scopes::Character, "add_prestige_experience", ScriptValue),
     (Scopes::Character, "add_prestige_level", ScriptValue),
     (Scopes::Character, "add_prestige_no_experience", ScriptValue),
-    (Scopes::TradeMarket, "add_price_modifier_for_character", UncheckedTodo),
+    (Scopes::TradeMarket, "add_price_modifier_for_character", Vb(validate_add_price_modifier_for_character)),
     (Scopes::Province, "add_province_modifier", Vbv(validate_add_modifier)),
     (Scopes::Character, "add_prowess_skill", ScriptValue),
     (
@@ -264,7 +266,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     (Scopes::None, "add_to_variable_list", Vb(validate_add_to_variable_list)),
     (Scopes::None, "add_to_variable_map", UncheckedTodo),
     (Scopes::TradeMarket, "add_toll_exception", UncheckedTodo),
-    (Scopes::Character.union(Scopes::TradeMarket).union(Scopes::TradeRoute), "add_trade_good_price_modifier", UncheckedTodo),
+    (Scopes::Character.union(Scopes::TradeMarket).union(Scopes::TradeRoute), "add_trade_good_price_modifier", Vb(validate_add_trade_good_price_modifier)),
     (Scopes::LandedTitle, "add_trade_good_category_xp", TargetValue("target", Scopes::TradeGoodCategory, "value")),
     (Scopes::TradeMarket, "add_trade_market_modifier", UncheckedTodo),
     (Scopes::Province, "add_trade_post_district", UncheckedTodo),
@@ -307,6 +309,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     (Scopes::Army, "assign_commander", Scope(Scopes::Character)),
     (Scopes::Character, "assign_council_task", Vb(validate_assign_council_task)),
     (Scopes::Character, "assign_councillor_type", Vb(validate_assign_councillor_type)),
+    (Scopes::TradeRoute, "assign_trader", Vb(validate_assign_trader)),
     (Scopes::Scheme, "auto_assign_scheme_agents", Yes),
     (Scopes::Character, "banish", Yes),
     (Scopes::CombatSide, "battle_event", Vb(validate_battle_event)),

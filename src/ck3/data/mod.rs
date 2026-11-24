@@ -103,6 +103,7 @@ pub mod suggestions;
 pub mod table_styles;
 pub mod task_contracts;
 pub mod tax_slots;
+pub mod trade;
 pub mod terrain;
 pub mod title_history;
 pub mod title_types;
