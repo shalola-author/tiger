@@ -7,6 +7,7 @@ Keep this file concise (under ~100 lines). Merge/update existing bullets instead
 - Modif name resolution: `lookup_modif` in `src/ck3/tables/modifs.rs` (templated `$X$_suffix` handlers). Game `modifiers.log` lists each tag with "Use areas:" (the ModifKinds).
 - MAA modif lookup: `lookup_modif` in `src/ck3/tables/modifs.rs` — `stationed_$MEN_AT_ARMS_TYPE$_*` handlers check `Item::MenAtArmsBase` (base types such as `siege_weapon`, `light_cavalry`), NOT `Item::MenAtArms` (specific type keys).
 - Confederation validator: `src/ck3/data/confederations.rs` — checks `confederation_base = house` for house-based confederations.
+- Defines whitelist: `src/ck3/tables/defines.rs` (`DEFINES` const + `DEFINES_MAP`); missing defines produce `error(unknown-field): unknown define N*|X`.
 - Title types: `src/ck3/data/title_types.rs` — loads `common/title_types`, records prefixes with `landless = yes` (top-level or in `properties`). `TitleTypes::is_landless(key)` checks for `_<prefix>_` in a title key. Titles baronyless check moved to validate-time in `src/ck3/data/titles.rs` (`baronyless_counties` set + `validate()`) so landless-type counties (nf, merchant) are exempt from "county with no baronies!".
 
 ## Verified Patterns & Macros
@@ -18,6 +19,7 @@ Keep this file concise (under ~100 lines). Merge/update existing bullets instead
 - Handler ORDER inside `lookup_modif` is load-bearing: specific prefix handlers (`trade_category_`, `trade_good_`, `stationed_`) must run BEFORE generic suffix catch-alls (`$TAX_SLOT_TYPE$_add`), and a new suffix handler must be checked against names that later prefix handlers own.
 - Reuse `validate_modifiers(&mut vd, is_duchy_capital)` for any nested modifier collection; `ModifKinds::TradeMarket` for market_* (sell/buy price + trade_capacity modifiers are TradeMarket).
 - `field_script_value_builder(name, sc_builder)` where `sc_builder: Fn(&Token)->ScopeContext`; `field_trigger_builder(name, Tooltipped::No, sc_builder)` for `{ trigger = {} }`.
+- `trigger_comparevalue(name, data)` derives CompareValue from the TRIGGER table type — changing `UncheckedTodo`→`CompareValue` in `src/ck3/tables/triggers.rs` is the complete fix for triggers used as bare value targets (`value = scope.trigger`); no separate list to update.
 - Duchy capital buildings identified by `flag = duchy_building` (not `type = duchy_capital`).
 - House-based confederations identified by `confederation_base = house` (not just `house_based_confederation` bool).
 
@@ -35,6 +37,8 @@ Keep this file concise (under ~100 lines). Merge/update existing bullets instead
 - Do NOT give one tag family a single ModifKinds when its suffixes differ: per `modifiers.log`, `$TRADE_GOOD_CATEGORY$_xp_gain_add/mult` = character+trade_route, `_xp_decline_add/mult` = character, while buy/sell price = char/prov/county/route/market and `_production_mult` = char/prov/county.
 - `stationed_*` modifiers are valid inside COUNTY blocks (vanilla `duchy_capital_county_modifier` in `00_duchy_capital_buildings.txt`) — their kinds must be `Province | County`, not Province-only, or you get 900+ "is a modifier for province but expected county".
 - Generic suffix handlers placed early in `lookup_modif` shadow later prefix handlers: `_xp_gain_mult` (lifestyle/trait) swallowed `trade_category_*_xp_gain_mult` (782 false errors), and the early MAA handler returned Province-only for `stationed_*`. Both fixed in cycle 9 — keep prefix handlers first.
+- `history` bucket (1106) is vanilla data errors ("title has no holder at X", "holder not alive at X") — not fixable via validator code; do not chase.
+- `unknown-field` (#1, 1367) is multi-subsystem: defines (defines.rs), unknown-token triggers (triggers.rs CompareValue), and scattered `unknown field X` validators — no single subsystem fixes all of it.
 
 ## 1.21 Fixes Applied (this session)
 - Cycle 1: Trade good production modifiers (`trade_good_*_production_flat/add/mult`, `trade_category_*_production_mult`) via prefix/suffix handlers in `src/ck3/tables/modifs.rs` `lookup_modif`. Total errors 18,849 -> 16,497 -> 14,209.
@@ -63,3 +67,9 @@ Keep this file concise (under ~100 lines). Merge/update existing bullets instead
   - `stationed_*` handlers unified: early MAA handler no longer intercepts `stationed_` (was Province-only); dedicated stationed handler returns `Province | County`; `stationed_maa_*` wildcard special-cased.
   - `buildings.rs`: `province/character_government_modifier` accept `parameter`+`not_parameter` (no `req_field`); `county_potential_trade_good_modifier` kinds `County | Province` (vanilla uses `trade_good_*_production_add` inside).
   - Verified in `modifiers.log`, `00_unit_definitions.txt`, `00_duchy_capital_buildings.txt`, `00_villages_district_buildings.txt`, `01_duchy_office_buildings.txt`, culture traditions. cargo test: 37 passed. Total errors 7922 -> 4141. Remaining missing-item is title/character history (history subsystem).
+- Cycle 10: #1 bucket `unknown-field` via `src/ck3/tables/triggers.rs` + `src/ck3/tables/defines.rs` (+ pre-existing structure fixes in doctrines.rs/religions.rs):
+  - triggers.rs: 10 value-returning triggers `UncheckedTodo`→`CompareValue` (acumen, base_popular_opinion, current_capacity, district_slots, num_districts, num_trade_markets, num_trade_routes, popular_opinion, province_size, total_monthly_tax_income) so they are accepted as bare value targets; addresses the unknown-token slice of unknown-field.
+  - defines.rs: registered 23 missing 1.21 defines (NCulture, NDomain, NDynasty, NGUI, NGraphics, NMercenary, NProvince, NTravel) for the unknown-define slice of unknown-field; all verified present in vanilla common/defines/00_defines.txt + category files.
+  - doctrines.rs: validate historical_glossary block on Doctrine/Tenet (vanilla common/religion/doctrine_types/20_doctrines.txt, tenet_types/00_tenet_types.txt).
+  - religions.rs: accept optional `history` bool on Rite (vanilla common/religion/rite_types/00_rite_types.txt, history = yes).
+  - No allow_unknown/anything/wildcard skips added. cargo test: 37 passed.
