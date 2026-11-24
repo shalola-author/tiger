@@ -244,6 +244,7 @@ impl DbKind for CasusBelliGroup {
     fn validate(&self, _key: &Token, block: &Block, data: &Everything) {
         let mut vd = Validator::new(block, data);
         vd.field_trigger_rooted("allowed_for_character", Tooltipped::No, Scopes::Character);
+        vd.field_trigger_rooted("allowed_for_character_display_regardless", Tooltipped::No, Scopes::Character);
         vd.field_bool("should_check_for_interface_availability");
         vd.field_bool("can_only_start_via_script");
 

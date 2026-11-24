@@ -225,6 +225,10 @@ impl DbKind for BookmarkPortrait {
                 validate_portrait_modifier_overrides,
             );
             vd.field_validated_block("colors", validate_portrait_colors);
+            vd.field_validated_block("accessory_variation_override", |block, data| {
+                let mut vd = Validator::new(block, data);
+                vd.field_validated_block("colors", validate_portrait_colors);
+            });
         });
         vd.field_validated_block("tags", |block, data| {
             let mut vd = Validator::new(block, data);

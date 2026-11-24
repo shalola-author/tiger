@@ -31,6 +31,18 @@ use crate::validate::{
 };
 use crate::validator::Validator;
 
+const SAVED_SCOPE_VALUES: &[&str] = &[
+    "gold",
+    "prestige",
+    "piety",
+    "influence",
+    "treasury",
+    "treasury_or_gold",
+    "prestige_level",
+    "piety_level",
+    "influence_level",
+];
+
 /// Look up a trigger token that evaluates to a trigger value.
 ///
 /// `name` is the token. `data` is used in special cases to verify the name dynamically,
@@ -1225,7 +1237,13 @@ pub fn validate_target_ok_this(
                     }
                     validate_inscopes(part_flags, part, inscopes, sc, data);
                     sc.replace(Scopes::Value, part.clone());
-                } else if is_character_token(part.as_str(), data) {
+                } else if outscopes.contains(Scopes::Character) && data.item_exists(Item::Character, part.as_str()) {
+                    sc.replace(Scopes::Character, part.clone());
+                } else if part_flags.contains(PartFlags::Last)
+                    && sc.scopes(data).intersects(Scopes::Character)
+                    && SAVED_SCOPE_VALUES.contains(&part.as_str().to_lowercase().as_str())
+                {
+                    sc.replace(Scopes::Value, part.clone());
                 } else {
                     // See if the user forgot a prefix like `faith:` or `culture:`
                     let mut opt_info = None;
@@ -1679,9 +1697,4 @@ pub fn trigger_comparevalue(name: &Token, data: &Everything) -> Option<Scopes> {
     }
 }
 
-// This function works around the problem of needing cfg-specific conditions in an else if
-#[inline]
-#[allow(unused_variables)]
-pub fn is_character_token(part: &str, data: &Everything) -> bool {
-    false
-}
+

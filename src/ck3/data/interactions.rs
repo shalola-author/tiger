@@ -278,6 +278,19 @@ impl DbKind for CharacterInteraction {
                 warn(ErrorKey::Validation).msg(msg).loc(key).push();
             }
         });
+        vd.field_validated_key_block("ai_frequency_by_tier_government_override", |key, b, data| {
+            let mut vd = Validator::new(b, data);
+            vd.req_field("government");
+            vd.field_item("government", Item::GovernmentType);
+            for tier in &["barony", "county", "duchy", "kingdom", "empire", "hegemony"] {
+                vd.req_field(tier);
+                vd.field_integer(tier);
+            }
+            if block.has_key("ai_frequency") {
+                let msg = "must not have both `ai_frequency` and `ai_frequency_by_tier_government_override`";
+                warn(ErrorKey::Validation).msg(msg).loc(key).push();
+            }
+        });
 
         // This is in character scope with no other named scopes builtin
         vd.field_trigger_rooted("ai_potential", Tooltipped::Yes, Scopes::Character);
@@ -364,6 +377,8 @@ impl DbKind for CharacterInteraction {
         vd.field_trigger("can_be_picked_title", Tooltipped::Yes, &mut sc.clone());
         vd.field_trigger("can_be_picked_artifact", Tooltipped::Yes, &mut sc.clone());
         vd.field_trigger("can_be_picked_regiment", Tooltipped::Yes, &mut sc.clone());
+        vd.field_trigger("can_be_picked_trade_good_category_type", Tooltipped::Yes, &mut ScopeContext::new(Scopes::TradeGoodCategory, key));
+        vd.field_trigger("can_be_picked_trade_good_type", Tooltipped::Yes, &mut ScopeContext::new(Scopes::TradeGoodType, key));
 
         vd.field_trigger("needs_confirmation", Tooltipped::No, &mut sc.clone());
 
