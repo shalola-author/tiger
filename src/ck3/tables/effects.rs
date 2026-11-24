@@ -551,7 +551,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     (Scopes::GreatHolyWar, "divide_war_chest", Vb(validate_divide_war_chest)),
     (Scopes::Character, "divorce", Scope(Scopes::Character)),
     (Scopes::GreatHolyWar, "do_ghw_title_handout", Scope(Scopes::TitleAndVassalChange)),
-    (Scopes::Province, "downgrade_building_effect", Item(Item::Building)),
+    (Scopes::Province, "downgrade_building_effect", ScopeOrItem(Scopes::Building, Item::Building)),
     (Scopes::Province, "downgrade_or_remove_random_district_building", UncheckedTodo),
     (Scopes::Province, "downgrade_or_remove_random_regular_building", UncheckedTodo),
     (Scopes::Province, "downgrade_random_district_building", UncheckedTodo),
@@ -795,7 +795,7 @@ pub(crate) const SCOPE_EFFECT: &[(Scopes, &str, Effect)] = &[
     // The docs give no syntax; vanilla has one use, `remove_barter_goods = scope:barter`.
     (Scopes::Character, "remove_barter_goods", ScriptValue),
     (Scopes::Culture, "remove_bonus_fascination_innovation", Yes),
-    (Scopes::Province, "remove_building", Item(Item::Building)),
+    (Scopes::Province, "remove_building", ScopeOrItem(Scopes::Building, Item::Building)),
     (Scopes::TravelPlan, "remove_character", Scope(Scopes::Character)),
     (Scopes::Character, "remove_character_flag", Unchecked),
     (Scopes::Character, "remove_character_modifier", Item(Item::Modifier)),

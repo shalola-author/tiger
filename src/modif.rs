@@ -31,6 +31,37 @@ pub trait ModifKinds: Display + Flags + Copy {
     fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> Option<Self>;
 }
 
+fn is_templated_maa_modifier(key: &Token) -> bool {
+    let key_lc = key.as_str().to_lowercase();
+    const SUFFIXES: &[&str] = &[
+        "_damage_add",
+        "_damage_mult",
+        "_pursuit_add",
+        "_pursuit_mult",
+        "_screen_add",
+        "_screen_mult",
+        "_siege_value_add",
+        "_siege_value_mult",
+        "_toughness_add",
+        "_toughness_mult",
+        "_control_value_add",
+        "_control_value_mult",
+        "_maintenance_mult",
+        "_maintenance_low_modifier",
+        "_maintenance_high_modifier",
+        "_max_size_add",
+        "_max_size_mult",
+        "_recruitment_cost_mult",
+        "_reinforcement_rate",
+    ];
+    for sfx in SUFFIXES {
+        if key_lc.ends_with(sfx) {
+            return true;
+        }
+    }
+    false
+}
+
 pub fn validate_modifs<'a, MK: ModifKinds>(
     _block: &Block,
     data: &'a Everything,
@@ -48,6 +79,7 @@ pub fn validate_modifs<'a, MK: ModifKinds>(
                 && !key.is("elderly_health")
                 && !key.is("child_health")
                 && !key.is("negate_health_penalty_add")
+                && !is_templated_maa_modifier(key)
             {
                 data.verify_exists(Item::ModifierFormat, key);
             }

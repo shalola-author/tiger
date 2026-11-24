@@ -209,6 +209,8 @@ pub fn lookup_modif(name: &Token, data: &Everything, warn: Option<Severity>) -> 
         "_siege_value_mult",
         "_toughness_add",
         "_toughness_mult",
+        "_control_value_add",
+        "_control_value_mult",
     ] {
         if let Some(s) = name_lc.strip_suffix_unchecked(sfx) {
             if name_lc.as_str().starts_with("stationed_") {
