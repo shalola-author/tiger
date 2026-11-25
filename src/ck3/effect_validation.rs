@@ -736,6 +736,12 @@ pub fn validate_create_dynamic_title(
     vd.field_validated_sc("adj", sc, validate_desc);
     vd.field_validated_sc("pre", sc, validate_desc);
     vd.field_validated_sc("article", sc, validate_desc);
+    vd.field_value("type");
+    vd.field_target("holder", sc, Scopes::Character);
+    if let Some(name) = vd.field_identifier("save_scope_as", "scope name") {
+        sc.define_name_token(name.as_str(), Scopes::LandedTitle, name, Temporary::No);
+    }
+    vd.field_bool("suppress_law_messages");
     sc.define_name("new_title", Scopes::LandedTitle, key);
 }
 
@@ -2234,6 +2240,7 @@ pub fn validate_give_noble_family_title(
     vd.field_choice("tier", &["county", "duchy"]);
     vd.field_validated_sc("article", sc, validate_desc);
     vd.field_item("government", Item::GovernmentType);
+    vd.field_target("liege", sc, Scopes::Character);
     if let Some(name) = vd.field_identifier("save_scope_as", "scope name") {
         sc.define_name_token(name.as_str(), Scopes::LandedTitle, name, Temporary::No);
     }

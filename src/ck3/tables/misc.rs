@@ -459,6 +459,10 @@ pub const GOVERNMENT_RULES: &[&str] = &[
     "dynasty_named_non_independent_landed_rulers",
     "allow_accolades",
     "allow_as_base_for_baronies",
+    "distribution_trade_routes",
+    "profit_trade_routes",
+    "uses_assembly",
+    "trade_post",
 ];
 
 // LAST UPDATED CK3 VERSION 1.12.1

@@ -105,6 +105,11 @@ fn validate_domicile_asset(block: &Block, data: &Everything) {
     vd.field_item("background", Item::File);
     vd.field_item("foreground", Item::File);
     vd.field_item("ambience", Item::Sound);
+    vd.field_validated_block("layer", |block, data| {
+        let mut vd = Validator::new(block, data);
+        vd.field_item("texture", Item::File);
+        vd.field_integer("depth");
+    });
 }
 
 fn validate_map_entity(bv: &BV, data: &Everything) {
@@ -197,6 +202,9 @@ impl DbKind for DomicileBuilding {
         vd.field_script_value_no_breakdown_builder("ai_value", sc_ai_value);
 
         vd.multi_field_validated_block("asset", validate_building_asset);
+
+        vd.field_any_cmp("header");
+        vd.field_any_cmp("frame");
 
         // undocumented
 

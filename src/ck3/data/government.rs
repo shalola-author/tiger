@@ -8,6 +8,7 @@ use crate::everything::Everything;
 use crate::item::{Item, ItemLoader};
 use crate::modif::validate_modifs;
 use crate::scopes::Scopes;
+use crate::script_value::validate_script_value;
 use crate::token::Token;
 use crate::tooltipped::Tooltipped;
 use crate::validate::validate_color;
@@ -90,6 +91,8 @@ impl DbKind for Government {
                 "herder",
                 "nomad",
                 "mandala",
+                "republic",
+                "merchant",
             ],
         );
         // TODO: "All government types listed above should have one default"
@@ -201,6 +204,13 @@ impl DbKind for Government {
             vd.field_integer("merit");
         });
 
+        vd.field_validated_block("build_queue_reserve_categories", |block, data| {
+            let mut vd = Validator::new(block, data);
+            for token in vd.values() {
+                data.verify_exists(Item::Currency, token);
+            }
+        });
+
         vd.field_list_items("compatible_government_type_succession", Item::GovernmentType);
 
         vd.field_validated_block("ai", validate_ai);
@@ -230,6 +240,15 @@ impl DbKind for Government {
 
         vd.replaced_field("flag", "`flags` list");
         vd.field_list("flags");
+
+        vd.field_bool("distribution_trade_routes");
+        vd.field_validated_block("house_power", |block, data| {
+            let mut vd = Validator::new(block, data);
+            vd.field_validated("value", |bv, data| {
+                let mut sc = ScopeContext::new(Scopes::Character, key);
+                validate_script_value(bv, data, &mut sc);
+            });
+        });
 
         // undocumented
 

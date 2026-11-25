@@ -212,6 +212,8 @@ impl DbKind for Situation {
         vd.field_bool("is_unique");
         vd.field_bool("keep_full_history");
         vd.field_bool("migration");
+        vd.field_item("religion", Item::Faith);
+        vd.field_bool("allow_negative_progress");
         // TODO: check that the start phase is part of this situation's phases
         vd.field_item("start_phase", Item::SituationPhase);
         vd.field_bool("use_situation_phase_flat_icons");
@@ -274,6 +276,9 @@ fn validate_participant_group(key: &Token, block: &Block, data: &Everything, sit
     vd.field_bool("require_domain_in_sub_region");
     vd.field_bool("require_realm_in_sub_region");
     vd.field_bool("require_domicile_in_sub_region");
+
+    vd.field_list_items("opposite_participant_group", Item::SituationParticipantGroup);
+    vd.field_integer("opposite_participant_group_opinion");
 
     vd.field_trigger_builder("is_character_valid", Tooltipped::Yes, sc_builder);
     vd.field_effect_builder("on_join", Tooltipped::Yes, sc_with_group);
@@ -341,6 +346,26 @@ fn validate_phase(key: &Token, block: &Block, data: &Everything, situation: &Tok
                     data.verify_exists(Item::SituationCatalyst, key);
                     // Dynamic values are fine since 1.20, vanilla uses a calculation here.
                     validate_script_value(bv, data, &mut sc_builder2(key));
+                });
+            });
+            vd.multi_field_validated_block("dlc_catalysts", |block, data| {
+                let mut vd = Validator::new(block, data);
+                vd.field_item("dlc_feature", Item::DlcFeature);
+                vd.field_validated_block("dlc_enabled_catalysts", |block, data| {
+                    let mut vd = Validator::new(block, data);
+                    vd.unknown_fields(|key, bv| {
+                        data.verify_exists(Item::SituationCatalyst, key);
+                        let mut sc = ScopeContext::new(Scopes::Situation, key);
+                        validate_script_value(bv, data, &mut sc);
+                    });
+                });
+                vd.field_validated_block("fallback_catalysts", |block, data| {
+                    let mut vd = Validator::new(block, data);
+                    vd.unknown_fields(|key, bv| {
+                        data.verify_exists(Item::SituationCatalyst, key);
+                        let mut sc = ScopeContext::new(Scopes::Situation, key);
+                        validate_script_value(bv, data, &mut sc);
+                    });
                 });
             });
         });

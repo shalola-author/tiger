@@ -350,6 +350,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
             ("?target_title", Scope(Scopes::LandedTitle)),
             ("?target_culture", Scope(Scopes::Culture)),
             ("?target_faith", Scope(Scopes::Faith)),
+            ("?targets_nothing", Boolean),
         ]),
     ),
     (Scopes::None, "can_start_tutorial_lesson", Item(Item::TutorialLesson)),

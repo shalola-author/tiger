@@ -62,6 +62,7 @@ impl DbKind for HoldingType {
         vd.replaced_field("flag", "`parameters` block");
         vd.req_field("primary_building");
         vd.field_item("primary_building", Item::Building);
+        vd.field_value("primary_district");
         vd.field_list_items("buildings", Item::Building);
         vd.field_bool("can_be_inherited");
         vd.field_bool("counts_toward_domain_limit_if_disabled");

@@ -166,6 +166,7 @@ impl DbKind for Scheme {
             "on_start",
             "on_phase_completed",
             "on_hud_click",
+            "on_push_for_advantages",
             "on_monthly",
             "on_semiyearly",
             "on_invalidated",
