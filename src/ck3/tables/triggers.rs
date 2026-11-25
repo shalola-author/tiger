@@ -1290,8 +1290,18 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::TradeGoodType, "has_trade_good_type", UncheckedTodo),
     (Scopes::TradeMarket, "has_trade_market_modifier", UncheckedTodo),
     (Scopes::TradeMarket, "has_trade_market_modifier_duration_remaining", UncheckedTodo),
-    (Scopes::TradeRoute, "has_trade_route_modifier", UncheckedTodo),
-    (Scopes::TradeRoute, "has_trade_route_modifier_duration_remaining", UncheckedTodo),
+    (Scopes::TradeRoute, "has_trade_route_modifier", Item(Item::Modifier)),
+    (
+        Scopes::TradeRoute,
+        "has_trade_route_modifier_duration_remaining",
+        Block(&[
+            ("modifier", Item(Item::Modifier)),
+            ("*days", CompareValue),
+            ("*weeks", CompareValue),
+            ("*months", CompareValue),
+            ("*years", CompareValue),
+        ]),
+    ),
     (Scopes::TradeRoute, "has_trader", Boolean),
     (Scopes::CultureTradition, "has_tradition_category", Item(Item::CultureTraditionCategory)),
     (Scopes::Character, "has_trait", ScopeOrItem(Scopes::Trait, Item::Trait)),
@@ -1478,7 +1488,14 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::Building, "is_building", UncheckedTodo),
     (Scopes::Building, "is_building_being_upgraded", Boolean),
     (Scopes::Building, "is_building_or_higher", UncheckedTodo),
-    (Scopes::TradeRoute, "is_buying_trade_good_in_market", UncheckedTodo),
+    (
+        Scopes::TradeRoute,
+        "is_buying_trade_good_in_market",
+        Block(&[
+            ("trade_market", Scope(Scopes::TradeMarket)),
+            ("trade_good_type", ScopeOrItem(Scopes::TradeGoodType, Item::TradeGoodType)),
+        ]),
+    ),
     (Scopes::TravelPlan, "is_cancelled", Boolean),
     (
         Scopes::Character,
@@ -2007,7 +2024,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::Province, "monthly_province_size_change", UncheckedTodo),
     (Scopes::Character, "months_as_ruler", CompareValueWarnEq),
     (Scopes::None, "months_from_game_start", CompareValue),
-    (Scopes::TradeRoute, "months_since_last_transaction", UncheckedTodo),
+    (Scopes::TradeRoute, "months_since_last_transaction", CompareValue),
     (Scopes::Faction, "months_until_max_discontent", CompareValueWarnEq),
     (
         Scopes::Character,
@@ -2048,7 +2065,7 @@ pub(crate) const TRIGGER: &[(Scopes, &str, Trigger)] = &[
     (Scopes::Domicile, "num_domicile_buildings", CompareValue),
     (Scopes::CombatSide, "num_enemies_killed", CompareValue),
     (Scopes::TravelPlan, "num_entourage_characters", CompareValue),
-    (Scopes::TradeRoute, "num_fulfilled_needs", UncheckedTodo),
+    (Scopes::TradeRoute, "num_fulfilled_needs", CompareValue),
     (Scopes::Activity, "num_future_phases", CompareValue),
     (Scopes::Character, "num_inactive_accolades", Removed("1.19", "replaced with `num_accolades`")),
     (Scopes::HolyOrder, "num_leased_titles", CompareValue),
@@ -3016,5 +3033,7 @@ const TRIGGER_COMPLEX: &[(Scopes, &str, ArgumentValue, Scopes)] = {
             ScopeOrItem(Scopes::Trait, Item::Trait),
             Scopes::Value,
         ),
+        (Scopes::TradeMarket, "toll_tier_in_market", Scope(Scopes::Character), Scopes::Value),
+        (Scopes::TradeMarket, "tolls_paid_in_market", Scope(Scopes::Character), Scopes::Value),
     ]
 };
