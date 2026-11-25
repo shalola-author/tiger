@@ -220,6 +220,7 @@ impl MenAtArmsType {
         vd.field_trigger_rooted("access_through_subject", Tooltipped::No, Scopes::Character);
 
         vd.field_integer("max");
+        vd.field_integer("control_value");
         validate_maa_stats(&mut vd);
         vd.field_integer("siege_tier");
         vd.field_bool("fights_in_main_phase");

@@ -263,6 +263,9 @@ impl Title {
         vd.field_bool("noble_family");
         vd.field_bool("can_use_nomadic_naming");
 
+        vd.field_value("type");
+        vd.field_item("market_capital", Item::Title);
+
         let mut sc_entry = ScopeContext::new(Scopes::Character, &self.key);
         sc_entry.define_name("target", Scopes::Character, &self.key);
         sc_entry.define_name("title", Scopes::LandedTitle, &self.key);
