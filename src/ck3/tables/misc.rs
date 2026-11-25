@@ -291,6 +291,7 @@ pub const DLC_FEATURES_CK3: &[&str] = &[
     "symbols_of_authority",
     "songs_of_the_realm",
     "silk_and_silver",
+    "playable_republics",
 ];
 
 /// A list of music provided by DLCs, for people who don't have them

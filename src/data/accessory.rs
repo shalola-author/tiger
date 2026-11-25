@@ -36,7 +36,12 @@ impl DbKind for Accessory {
             if let Some(token) = vd.field_value("required_tags") {
                 for tag in token.split(',') {
                     if !tag.is("") {
-                        data.verify_exists(Item::AccessoryTag, &tag);
+                        if tag.starts_with("not(") {
+                            let real_tag = &tag.split('(')[1].split(')')[0];
+                            data.verify_exists(Item::AccessoryTag, real_tag);
+                        } else {
+                            data.verify_exists(Item::AccessoryTag, &tag);
+                        }
                     }
                 }
             }
