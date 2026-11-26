@@ -150,8 +150,6 @@ impl DbKind for ActivityType {
         // docs say activity_start_diff_days
         join_chance_sc.define_name("estimated_arrival_diff_days", Scopes::Value, key);
         join_chance_sc.define_list("special_guests", Scopes::Character, key);
-        join_chance_sc.define_name("special_type", Scopes::Flag, key);
-        join_chance_sc.define_name("special_option", Scopes::Flag, key);
 
         let mut special_guests_sc = ScopeContext::new(Scopes::Character, key);
         if has_special_option {
@@ -431,8 +429,6 @@ impl DbKind for ActivityType {
         let mut sc = ScopeContext::new(Scopes::Activity, key);
         sc.define_name("host", Scopes::Character, key);
         sc.define_name("activity", Scopes::Activity, key);
-        sc.define_name("province", Scopes::Province, key);
-        sc.define_name("winter_county", Scopes::LandedTitle, key);
         vd.multi_field_validated("map_entity", |bv, data| match bv {
             BV::Value(token) => data.verify_exists(Item::Entity, token),
             BV::Block(block) => {
@@ -574,7 +570,6 @@ fn validate_phase(key: &Token, block: &Block, data: &Everything, has_special_opt
         let mut sc = ScopeContext::new(Scopes::Activity, key);
         sc.define_name("host", Scopes::Character, key);
         sc.define_name("province", Scopes::Province, key);
-        sc.define_name("activity", Scopes::Activity, key);
         sc
     });
 
@@ -752,9 +747,6 @@ impl DbKind for ActivityPulseAction {
         sc.define_name("activity", Scopes::Activity, key);
         sc.define_name("host", Scopes::Character, key);
         sc.define_name("province", Scopes::Province, key);
-        sc.define_name("first", Scopes::Character, key);
-        sc.define_name("second", Scopes::Character, key);
-        sc.define_name("temp_char", Scopes::Character, key);
         vd.field_trigger("is_valid", Tooltipped::No, &mut sc);
         vd.field_script_value("weight", &mut sc);
         vd.field_effect("effect", Tooltipped::No, &mut sc);

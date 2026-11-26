@@ -45,21 +45,6 @@ impl DbKind for CharacterInteraction {
         sc.define_name("puppet_or_actor", Scopes::Character, key);
         sc.define_name("is_puppet_action", Scopes::Bool, key);
         sc.define_list("target_titles", Scopes::LandedTitle, key);
-        // Interaction-specific scopes (used in vanilla interactions)
-        sc.define_name("ai_recipient", Scopes::Character, key);
-        sc.define_name("agent_slot", Scopes::AgentSlot, key);
-        sc.define_name("faith", Scopes::Faith, key);
-        sc.define_name("new_value", Scopes::Value, key);
-        sc.define_name("task_contract", Scopes::TaskContract, key);
-        sc.define_name("domain_fertility", Scopes::Value, key);
-        sc.define_name("defender_power", Scopes::Value, key);
-        sc.define_name("domain", Scopes::Character, key);
-        sc.define_name("artifact", Scopes::Artifact, key);
-        sc.define_name("great_project_contribution", Scopes::ProjectContribution, key);
-        sc.define_name("new_missionary", Scopes::Character, key);
-        sc.define_name("is_complete_monopoly", Scopes::Bool, key);
-        sc.define_name("is_exploitative_monopoly", Scopes::Bool, key);
-        sc.define_name("target_character", Scopes::Character, key);
         // TODO: figure out if there's a better way than exhaustively matching on "interface" and "special_interaction"
         if let Some(target_type) = block.get_field_value("target_type") {
             if target_type.is("artifact") {
