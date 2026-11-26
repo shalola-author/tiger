@@ -210,6 +210,7 @@ impl DbKind for ArtifactFeature {
         sc.define_name("newly_created_artifact", Scopes::Artifact, key);
         sc.define_name("owner", Scopes::Character, key);
         sc.define_name("wealth", Scopes::Value, key);
+        sc.define_name("bow_type", Scopes::Flag, key);
 
         let loca = format!("feature_{key}");
         data.verify_exists_implied(Item::Localization, &loca, key);
