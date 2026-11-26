@@ -45,39 +45,55 @@ impl DbKind for CharacterInteraction {
         sc.define_name("puppet_or_actor", Scopes::Character, key);
         sc.define_name("is_puppet_action", Scopes::Bool, key);
         sc.define_list("target_titles", Scopes::LandedTitle, key);
-        // TODO: figure out if there's a better way than exhaustively matching on "interface" and "special_interaction"
+        let mut target_defined = false;
         if let Some(target_type) = block.get_field_value("target_type") {
             if target_type.is("artifact") {
                 sc.define_name("target", Scopes::Artifact, target_type);
+                target_defined = true;
             } else if target_type.is("title") {
                 sc.define_name("target", Scopes::LandedTitle, target_type);
                 sc.define_name("landed_title", Scopes::LandedTitle, target_type);
+                target_defined = true;
             }
-        } else if let Some(interface) = block.get_field_value("interface") {
-            if interface.is("interfere_in_war") || interface.is("call_ally") {
-                sc.define_name("target", Scopes::War, interface);
-            } else if interface.is("blackmail") {
-                sc.define_name("target", Scopes::Secret, interface);
-            } else if interface.is("council_task_interaction") {
-                sc.define_name("target", Scopes::CouncilTask, interface);
-            } else if interface.is("create_claimant_faction_against") {
-                sc.define_name("landed_title", Scopes::LandedTitle, interface);
-            } else if interface.is("modify_vassal_contract") {
-                sc.define_list("changed_obligations", Scopes::VassalObligationLevel, interface);
+        }
+        if !target_defined {
+            if let Some(interface) = block.get_field_value("interface") {
+                if interface.is("interfere_in_war") || interface.is("call_ally") {
+                    sc.define_name("target", Scopes::War, interface);
+                    target_defined = true;
+                } else if interface.is("blackmail") {
+                    sc.define_name("target", Scopes::Secret, interface);
+                    target_defined = true;
+                } else if interface.is("council_task_interaction") {
+                    sc.define_name("target", Scopes::CouncilTask, interface);
+                    target_defined = true;
+                } else if interface.is("create_claimant_faction_against") {
+                    sc.define_name("landed_title", Scopes::LandedTitle, interface);
+                } else if interface.is("modify_vassal_contract") {
+                    sc.define_list("changed_obligations", Scopes::VassalObligationLevel, interface);
+                }
             }
-        } else if let Some(special) = block.get_field_value("special_interaction") {
-            if special.is("invite_to_council_interaction") {
-                sc.define_name("target", Scopes::CouncilTask, special);
-            } else if special.is("end_war_attacker_victory_interaction")
-                || special.is("end_war_attacker_defeat_interaction")
-                || special.is("end_war_white_peace_interaction")
-            {
-                sc.define_name("war", Scopes::War, special);
-            } else if special.is("remove_scheme_interaction")
-                || special.is("invite_to_scheme_interaction")
-            {
-                sc.define_name("scheme", Scopes::Scheme, special);
+        }
+        if !target_defined {
+            if let Some(special) = block.get_field_value("special_interaction") {
+                if special.is("invite_to_council_interaction") {
+                    sc.define_name("target", Scopes::CouncilTask, special);
+                    target_defined = true;
+                } else if special.is("end_war_attacker_victory_interaction")
+                    || special.is("end_war_attacker_defeat_interaction")
+                    || special.is("end_war_white_peace_interaction")
+                {
+                    sc.define_name("war", Scopes::War, special);
+                } else if special.is("remove_scheme_interaction")
+                    || special.is("invite_to_scheme_interaction")
+                {
+                    sc.define_name("scheme", Scopes::Scheme, special);
+                }
             }
+        }
+        // Fallback: target is commonly a Character (recipient) or LandedTitle
+        if !target_defined {
+            sc.define_name("target", Scopes::Character, key);
         }
         for block in block.get_field_blocks("send_option") {
             if let Some(token) = block.get_field_value("flag") {

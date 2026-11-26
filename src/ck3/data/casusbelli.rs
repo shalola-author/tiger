@@ -42,6 +42,7 @@ impl DbKind for CasusBelli {
             if has_claimant {
                 sc.define_name("claimant", Scopes::Character, key);
             }
+            sc.define_name("target", Scopes::LandedTitle, key);
             sc
         };
 
