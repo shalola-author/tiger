@@ -42,6 +42,7 @@ impl DbKind for CasusBelli {
             if has_claimant {
                 sc.define_name("claimant", Scopes::Character, key);
             }
+            sc.define_name("war", Scopes::War, key);
             sc
         };
 
@@ -96,6 +97,7 @@ impl DbKind for CasusBelli {
             sc.define_name("target", Scopes::LandedTitle, key);
             sc.define_list("attackers", Scopes::LandedTitle, key);
             sc.define_list("defenders", Scopes::LandedTitle, key);
+            sc.define_name("secondary_title", Scopes::LandedTitle, key);
             sc
         };
 
